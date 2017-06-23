@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/JatxMusicAndroid.iml" filepath="$PROJECT_DIR$/JatxMusicAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/aFileDialog/aFileDialog.iml" filepath="$PROJECT_DIR$/aFileDialog/aFileDialog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/musicCommons/musicCommons.iml" filepath="$PROJECT_DIR$/musicCommons/musicCommons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/musicReceiverAndroid/musicReceiverAndroid.iml" filepath="$PROJECT_DIR$/musicReceiverAndroid/musicReceiverAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/musicTransmitterAndroid/musicTransmitterAndroid.iml" filepath="$PROJECT_DIR$/musicTransmitterAndroid/musicTransmitterAndroid.iml" />
+    </modules>
+  </component>
+</project>
