@@ -4,9 +4,9 @@ android {
     signingConfigs {
         config {
             keyAlias 'key'
-            keyPassword 'dexpp37'
+            keyPassword ''
             storeFile file('J:\\Studio\\JatxMusicAndroid\\transmitter.keystore')
-            storePassword 'dexpp37'
+            storePassword ''
         }
     }
     compileSdkVersion 28
