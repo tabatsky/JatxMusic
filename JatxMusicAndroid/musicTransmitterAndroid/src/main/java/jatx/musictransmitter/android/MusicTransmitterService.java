@@ -1,12 +1,22 @@
 package jatx.musictransmitter.android;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,11 +33,23 @@ import jatx.musictransmitter.interfaces.UIController;
 
 public class MusicTransmitterService extends Service implements UIController {
     public static final String STOP_SERVIVE = "jatx.musictransmitter.android.stopService";
+    public static final String STATUS_REQUEST = "jatx.musictransmitter.android.statusRequest";
+
     private static final String LOG_TAG_SERVICE = "transmitterMainService";
+
+    public static boolean isInstanceRunning = false;
 
     private TransmitterController tc;
     private TransmitterPlayer tp;
     private TimeUpdater tu;
+
+    private volatile WifiManager mWifiManager;
+    private volatile WifiManager.WifiLock mLock;
+
+    private volatile float currentMs;
+    private volatile float trackLengthMs;
+    private volatile boolean status;
+    private volatile int position;
 
     public MusicTransmitterService() {
     }
@@ -40,19 +62,82 @@ public class MusicTransmitterService extends Service implements UIController {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (isInstanceRunning) {
+            stopSelf();
+            return START_STICKY_COMPATIBILITY;
+        }
+
+        isInstanceRunning = true;
+
+        final Intent actIntent = new Intent();
+        actIntent.setClass(this, MusicTransmitterActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, actIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final String channelId;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channelId = createNotificationChannel("music transmitter service", "Music transmitter service");
+        } else {
+            channelId = "";
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
+        builder.setContentTitle("JatxMusicReceiver");
+        builder.setContentText("Foreground service is running");
+        builder.setContentIntent(pendingIntent);
+
+        final Notification notification = builder.build();
+        startForeground(2315, notification);
+
+        mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        mLock = mWifiManager.createWifiLock("music-transmitter-wifi-lock");
+        mLock.setReferenceCounted(false);
+        mLock.acquire();
+
         prepareAndStart(intent);
-        return START_STICKY;
+        return START_STICKY_COMPATIBILITY;
     }
 
     @Override
     public void onDestroy() {
-        tu.interrupt();
-        tp.interrupt();
-        tc.setFinishFlag();
+        try {
+            mLock.release();
+
+            tu.interrupt();
+            tp.interrupt();
+            tc.setFinishFlag();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
+        stopForeground(true);
+
+        isInstanceRunning = false;
+
         super.onDestroy();
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private String createNotificationChannel(String channelId, String channelName) {
+        NotificationChannel chan = new NotificationChannel(channelId,
+                channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        service.createNotificationChannel(chan);
+        return channelId;
+    }
+
     private void prepareAndStart(Intent intent) {
+        BroadcastReceiver statusRequestReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                setPosition(position);
+                setWifiStatus(status);
+                setCurrentTime(currentMs, trackLengthMs);
+            }
+        };
+        registerReceiver(statusRequestReceiver, new IntentFilter(STATUS_REQUEST));
+
         BroadcastReceiver stopSelfReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -89,6 +174,16 @@ public class MusicTransmitterService extends Service implements UIController {
         };
         IntentFilter tpPauseFilter = new IntentFilter(ServiceInterface.TC_PAUSE);
         registerReceiver(tpPauseReceiver, tpPauseFilter);
+
+        BroadcastReceiver tpSeekReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                double progress = intent.getDoubleExtra("progress", 0.0);
+                tp.seek(progress);
+            }
+        };
+        IntentFilter tpSeekFilter = new IntentFilter(ServiceInterface.TP_SEEK);
+        registerReceiver(tpSeekReceiver, tpSeekFilter);
 
         BroadcastReceiver tpSetFileListReceiver = new BroadcastReceiver() {
             @Override
@@ -158,6 +253,8 @@ public class MusicTransmitterService extends Service implements UIController {
 
     @Override
     public void setWifiStatus(boolean status) {
+        this.status = status;
+
         Log.e(LOG_TAG_SERVICE, "setting wifi status: " + status);
         Intent intent = new Intent(UIController.SET_WIFI_STATUS);
         intent.putExtra("status", status);
@@ -166,6 +263,8 @@ public class MusicTransmitterService extends Service implements UIController {
 
     @Override
     public void setPosition(int position) {
+        this.position = position;
+
         Intent intent = new Intent(UIController.SET_POSITION);
         intent.putExtra("position", position);
         sendBroadcast(intent);
@@ -173,6 +272,9 @@ public class MusicTransmitterService extends Service implements UIController {
 
     @Override
     public void setCurrentTime(float currentMs, float trackLengthMs) {
+        this.currentMs = currentMs;
+        this.trackLengthMs = trackLengthMs;
+
         Intent intent = new Intent(UIController.SET_CURRENT_TIME);
         intent.putExtra("currentMs", currentMs);
         intent.putExtra("trackLengthMs", trackLengthMs);
@@ -182,6 +284,17 @@ public class MusicTransmitterService extends Service implements UIController {
     @Override
     public void forcePause() {
         Intent intent = new Intent(UIController.SET_WIFI_STATUS);
+        sendBroadcast(intent);
+    }
+
+    @Override
+    public void errorMsg(final String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void nextTrack() {
+        Intent intent = new Intent(UIController.NEXT_TRACK);
         sendBroadcast(intent);
     }
 }

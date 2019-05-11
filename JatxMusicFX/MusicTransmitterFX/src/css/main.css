@@ -1,29 +1,34 @@
 /* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
 
 #main_pane {
-	-fx-pref-width: 450.0;
+	-fx-pref-width: 540.0;
 	-fx-pref-height: 640.0;
 }
 
 #my_list {
-	-fx-pref-width:450.0;
+	-fx-pref-width:540.0;
 	-fx-pref-height:540.0;
 }
 
 #menu_pane_top {
-	-fx-pref-width:450.0;
+	-fx-pref-width:540.0;
 	-fx-pref-height:30.0;
 }
 
 #progress_bar {
-	-fx-pref-width:450.0;
+	-fx-pref-width:540.0;
 	-fx-pref-height:10.0;
 	-fx-accent:black;
 }
 
 #button_pane_bottom {
-	-fx-pref-width:450.0;
+	-fx-pref-width:540.0;
 	-fx-pref-height:60.0;
+}
+
+#checkbox_shuffle {
+	-fx-pref-width: 90.0;
+	-fx-pref-height: 60.0;
 }
 
 .my_button_bottom {

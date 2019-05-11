@@ -13,6 +13,7 @@ package jatx.musiccommons.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import javazoom.jl.decoder.SampleBuffer;
 
@@ -165,7 +166,21 @@ public class Frame {
 		
 		return f;
 	}
-	
+
+	public static Frame fromMicRawData(byte[] rawData, int dataSize, int position) {
+		Frame f = new Frame();
+
+		f.position = position;
+
+		f.freq = 48000;
+		f.channels = 2;
+
+		f.data = Arrays.copyOf(rawData, dataSize);
+		f.size = dataSize;
+
+		return f;
+	}
+
 	public byte[] toByteArray() {
 		byte freq1 = (byte)((freq>>24)&0xff);
 		byte freq2 = (byte)((freq>>16)&0xff);

@@ -24,12 +24,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,7 +42,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MusicReceiverActivity extends ActionBarActivity implements UIController {
+public class MusicReceiverActivity extends AppCompatActivity implements UIController {
 	final static String PREFS_NAME = "MusicReceiverPrefsFile";
 
 	final static String DELIM = "#13731#";
@@ -57,9 +59,9 @@ public class MusicReceiverActivity extends ActionBarActivity implements UIContro
 	private EditText hostField;
 	private Button mToogleButton;
 	private CheckBox mAutoCheckBox;
-	
-	private volatile WifiManager mWifiManager;
-	private volatile WifiLock mLock;
+
+	private int hoursFromInstall;
+	private boolean reviewOfferWasShown;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,11 +101,6 @@ public class MusicReceiverActivity extends ActionBarActivity implements UIContro
 		
 		SelectHostDialog dialog = SelectHostDialog.newInstance(this);
 		dialog.show(getSupportFragmentManager(), "select-host-dialog");
-		
-		mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-		mLock = mWifiManager.createWifiLock("music-receiver-wifi-lock");
-		mLock.setReferenceCounted(false);
-		mLock.acquire();
 	}
 	
 	@Override
@@ -112,8 +109,17 @@ public class MusicReceiverActivity extends ActionBarActivity implements UIContro
 
 		Intent intent = new Intent(MusicReceiverService.STOP_SERVIVE);
 		sendBroadcast(intent);
-		mLock.release();
-		
+
+
+		try {
+			final AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+			audioManager.setMode(AudioManager.MODE_NORMAL);
+			audioManager.stopBluetoothSco();
+			audioManager.setBluetoothScoOn(false);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+
 		super.onDestroy();
 	}
 	
@@ -236,8 +242,7 @@ public class MusicReceiverActivity extends ActionBarActivity implements UIContro
 				uiStartJob();
 			}
 		};
-		IntentFilter uiStartJobFilter = new IntentFilter(UIController.START_JOB);
-		registerReceiver(uiStartJobReceiver, uiStartJobFilter);
+		registerReceiver(uiStartJobReceiver, new IntentFilter(UIController.START_JOB));
 
 		BroadcastReceiver uiStopJobReceiver = new BroadcastReceiver() {
 			@Override
@@ -245,20 +250,122 @@ public class MusicReceiverActivity extends ActionBarActivity implements UIContro
 				uiStopJob();
 			}
 		};
-		IntentFilter uiStopJobFilter = new IntentFilter(UIController.STOP_JOB);
-		registerReceiver(uiStopJobReceiver, uiStopJobFilter);
+		registerReceiver(uiStopJobReceiver,  new IntentFilter(UIController.STOP_JOB));
 
 		loadSettings();
-		
+
+		if (hoursFromInstall >= 72 && !reviewOfferWasShown) {
+			reviewOfferWasShown = true;
+			saveSettings();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getString(R.string.need_you_help));
+			builder.setMessage(getString(R.string.do_you_like_this_app));
+			builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialogInterface, int i) {
+					dialogInterface.dismiss();
+				}
+			});
+			builder.setPositiveButton(getString(R.string.item_review_app), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialogInterface, int i) {
+					dialogInterface.dismiss();
+					try {
+						startActivity(new Intent(Intent.ACTION_VIEW,
+								Uri.parse("market://details?id=jatx.musicreceiver.android")));
+					} catch (android.content.ActivityNotFoundException anfe) {
+						startActivity(new Intent(Intent.ACTION_VIEW,
+								Uri.parse("https://play.google.com/store/apps/details?id=jatx.musicreceiver.android")));
+					}
+				}
+			});
+
+			AlertDialog dialog = builder.create();
+			dialog.show();
+		}
+
 		hostField.setText(host);
 		mAutoCheckBox.setChecked(Globals.isAutoConnect);
 
-		Intent intent = new Intent(this, MusicReceiverService.class);
-		intent.putExtra("host", host);
-		startService(intent);
+		BroadcastReceiver statusResponseReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				host = intent.getStringExtra("host");
+				isRunning = intent.getBooleanExtra("isRunning", false);
+				if (host != null) hostField.setText(host);
+				mToogleButton.setText(getString(isRunning ? R.string.string_stop: R.string.string_start));
+			}
+		};
+		registerReceiver(statusResponseReceiver, new IntentFilter(MusicReceiverService.STATUS_RESPONSE));
+
+		if (!MusicReceiverService.isInstanceRunning) {
+			Intent intent = new Intent(this, MusicReceiverService.class);
+			intent.putExtra("host", host);
+			startService(intent);
+		} else {
+			Intent intent = new Intent(MusicReceiverService.STATUS_REQUEST);
+			sendBroadcast(intent);
+		}
 
 		//act = new AutoConnectThread(this);
 		//act.start();
+
+		final AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+		final CheckBox bluetoothCheckBox = (CheckBox) findViewById(R.id.bluetooth);
+		bluetoothCheckBox.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (bluetoothCheckBox.isChecked()) {
+					try {
+                        audioManager.setBluetoothScoOn(true);
+						audioManager.startBluetoothSco();
+					} catch (Exception e) {
+						Toast.makeText(MusicReceiverActivity.this,
+								getString(R.string.toast_bluetooth_error),
+								Toast.LENGTH_SHORT).show();
+						bluetoothCheckBox.setChecked(false);
+					}
+				} else {
+					try {
+						audioManager.setMode(AudioManager.MODE_NORMAL);
+						audioManager.stopBluetoothSco();
+						audioManager.setBluetoothScoOn(false);
+					} catch (Throwable e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+		BroadcastReceiver bluetoothReceiver = new BroadcastReceiver() {
+			int prevState = -223355;
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				int state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -1);
+				if (state == AudioManager.SCO_AUDIO_STATE_CONNECTED) {
+					audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+					Log.e(LOG_TAG_ACTIVITY, "mode in call");
+				} else {
+					audioManager.setMode(AudioManager.MODE_NORMAL);
+					//audioManager.stopBluetoothSco();
+					//audioManager.setBluetoothScoOn(false);
+					Log.e(LOG_TAG_ACTIVITY, "mode normal");
+				}
+				/*
+				if (mToogleButton.getText().equals(getString(R.string.string_stop)) && state!=prevState) {
+					mToogleButton.performClick();
+					prevState = state;
+					Log.e("state changed", "" + state);
+				}
+				*/
+			}
+		};
+		if (Build.VERSION.SDK_INT < 14) {
+			registerReceiver(bluetoothReceiver, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_CHANGED));
+		} else {
+			registerReceiver(bluetoothReceiver, new IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED));
+		}
 	}
 	
 	public void loadSettings() {
@@ -280,6 +387,15 @@ public class MusicReceiverActivity extends ActionBarActivity implements UIContro
 		Log.i("host index", Integer.toString(hostIndex));
 		
 		Globals.isAutoConnect = settings.getBoolean("autoConnect", false);
+
+		reviewOfferWasShown = settings.getBoolean("reviewOfferWasShown", false);
+		long installTime = settings.getLong("installTime", System.currentTimeMillis());
+		{
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putLong("installTime", installTime);
+			editor.commit();
+		}
+		hoursFromInstall = (int)((System.currentTimeMillis() - installTime)/(3600*1000));
 	}
 	
 	public void saveSettings() {
@@ -296,6 +412,8 @@ public class MusicReceiverActivity extends ActionBarActivity implements UIContro
 			allHostsBuilder.append(allHosts.get(i));
 		}
 		editor.putString("all_IP", allHostsBuilder.toString());
+
+		editor.putBoolean("reviewOfferWasShown", reviewOfferWasShown);
 		
 		editor.commit();
 	}

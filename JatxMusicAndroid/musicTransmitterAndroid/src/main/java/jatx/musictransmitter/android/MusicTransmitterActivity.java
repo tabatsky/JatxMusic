@@ -14,8 +14,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,19 +29,24 @@ import jatx.musictransmitter.interfaces.UIController;
 import jatx.debug.Debug;
 import jatx.musictransmitter.commons.FolderUtil;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -52,12 +59,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.Toast;
-import android.support.v7.app.ActionBarActivity;
 import android.widget.TextView;
 import ar.com.daidalos.afiledialog.FileChooserActivity;
 
-public class MusicTransmitterActivity extends ActionBarActivity implements UI, ServiceInterface {
+public class MusicTransmitterActivity extends AppCompatActivity implements UI, ServiceInterface {
 	private static final String PREFS_NAME = "MusicTransmitterPreferences";
 	private static final String LOG_TAG_ACTIVITY = "transmitterMainActivity";
 	
@@ -66,6 +73,19 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	private static final int REQUEST_EXPORT_LIST = 503;
 	private static final int REQUEST_IMPORT_LIST = 504;
 	public static final int REQUEST_EDIT_TRACK = 505;
+
+	public static final int PERMISSION_SDCARD_REQUEST_OPEN_MP3 = 1112;
+	public static final int PERMISSION_SDCARD_REQUEST_OPEN_DIR = 1113;
+	public static final int PERMISSION_SDCARD_REQUEST_IMPORT_M3U8 = 1114;
+	public static final int PERMISSION_SDCARD_REQUEST_EXPORT_M3U8 = 1115;
+	public static final int PERMISSION_SDCARD_REQUEST_LOAD_FILELIST = 1116;
+	public static final int PERMISSION_SDCARD_REQUEST_SAVE_FILELIST = 1117;
+	public static final int PERMISSION_MIC_REQUEST = 1118;
+	public static final String PERMISSION_READ = Manifest.permission.READ_EXTERNAL_STORAGE;
+	public static final String PERMISSION_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+	public static final String[] PERMISSIONS_SDCARD = new String[]{PERMISSION_READ, PERMISSION_WRITE};
+	public static final String PERMISSION_MIC = Manifest.permission.RECORD_AUDIO;
+	public static final String[] PERMISSIONS_MIC = new String[]{PERMISSION_MIC};
 
     boolean isPlaying;
 	List<File> mFileList;
@@ -81,15 +101,27 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	private ImageButton mFwdButton;
 	private ImageButton mVolDownButton;
 	private ImageButton mVolUpButton;
+	private ImageButton mRepeatButton;
+	private ImageButton mShuffleButton;
 	private TextView mVolLabel;
 	private ImageView mWifiOkIcon;
 	private ImageView mWifiNoIcon;
-	private ProgressBar mProgressBar;
-	
-	private volatile WifiManager mWifiManager;
-	private volatile WifiLock mLock;
+	private SeekBar mProgressBar;
 	
 	private int mCurrentPosition = -1;
+
+	private int hoursFromInstall;
+	private boolean reviewOfferWasShown;
+
+    private volatile boolean isShuffle = false;
+    private static List<Integer> shuffledList;
+    static {
+        shuffledList = new ArrayList<Integer>();
+        for (int i=0; i<10000; i++) {
+            shuffledList.add(i);
+        }
+        Collections.shuffle(shuffledList);
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -109,9 +141,39 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		TrackInfo.setDBCache(new MusicInfoDBHelper(this));
 		TrackInfo.setUI(this);
 		
-		loadFileList(null);
+		loadFileList(null, false);
 		loadSettings();
-		
+
+		if (hoursFromInstall >= 72 && !reviewOfferWasShown) {
+			reviewOfferWasShown = true;
+			saveSettings();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getString(R.string.need_you_help));
+			builder.setMessage(getString(R.string.do_you_like_this_app));
+			builder.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialogInterface, int i) {
+					dialogInterface.dismiss();
+				}
+			});
+			builder.setPositiveButton(getString(R.string.item_review_app), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialogInterface, int i) {
+					dialogInterface.dismiss();
+					try {
+						startActivity(new Intent(Intent.ACTION_VIEW,
+								Uri.parse("market://details?id=jatx.musictransmitter.android")));
+					} catch (android.content.ActivityNotFoundException anfe) {
+						startActivity(new Intent(Intent.ACTION_VIEW,
+								Uri.parse("https://play.google.com/store/apps/details?id=jatx.musictransmitter.android")));
+					}
+				}
+			});
+
+			AlertDialog dialog = builder.create();
+			dialog.show();
+		}
+
 		mAdapter = new TrackListAdapter(this);
 		
 	    mListView = (ListView)findViewById(R.id.list);
@@ -124,7 +186,9 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	    mVolLabel = (TextView) findViewById(R.id.vol_label);
 	    mWifiOkIcon = (ImageView) findViewById(R.id.wifi_ok);
 	    mWifiNoIcon = (ImageView) findViewById(R.id.wifi_no);
-	    mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+	    mProgressBar = (SeekBar) findViewById(R.id.progress_bar);
+	    mRepeatButton = (ImageButton)findViewById(R.id.repeat);
+	    mShuffleButton = (ImageButton)findViewById(R.id.shuffle);
 	    
 	    mListView.setAdapter(mAdapter);
 	    
@@ -132,8 +196,8 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mPlayButton.performClick();
 				mCurrentPosition = position;
+				mPlayButton.performClick();
 				//Globals.tp.setPosition(position);
 				tpSetPosition(position);
 			}
@@ -161,6 +225,7 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 					return;
 				} else if (mCurrentPosition==-1) {
 					//Globals.tp.setPosition(0);
+					mCurrentPosition = 0;
 					tpSetPosition(0);
 	        		setPosition(0);
 				}
@@ -193,7 +258,27 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 				tcPause();
 			}
 		});
-	    
+
+	    mRepeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isShuffle = true;
+
+                mRepeatButton.setVisibility(View.GONE);
+                mShuffleButton.setVisibility(View.VISIBLE);
+            }
+        });
+
+	    mShuffleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isShuffle = false;
+
+                mRepeatButton.setVisibility(View.VISIBLE);
+                mShuffleButton.setVisibility(View.GONE);
+            }
+        });
+
 	    mVolDownButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -213,11 +298,24 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 				
 				final int newPosition = (mCurrentPosition+1)%mFileList.size();
 				//final int newPosition = (mCurrentPosition+1)%Globals.fileList.size();
-				
-        		mPlayButton.performClick();
+
+				mCurrentPosition = newPosition;
+				if (mCurrentPosition<0||mCurrentPosition>=mFileList.size()) {
+					//if (position<0||position>=Globals.fileList.size()) {
+					return;
+				}
+
+                final int realPosition;
+                if (!isShuffle) {
+                    realPosition = mCurrentPosition;
+                } else {
+                    realPosition = shuffledList.get(mCurrentPosition) % mFileList.size();
+                }
+
+                mPlayButton.performClick();
 				
         		//Globals.tp.setPosition(newPosition);
-				tpSetPosition(newPosition);
+				tpSetPosition(realPosition);
 			}
 		});
 	    
@@ -235,16 +333,29 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 					newPosition = mFileList.size() - 1;
 					//newPosition = Globals.fileList.size() - 1;
 				}
-				
+
+                mCurrentPosition = newPosition;
+                if (mCurrentPosition<0||mCurrentPosition>=mFileList.size()) {
+                    //if (position<0||position>=Globals.fileList.size()) {
+                    return;
+                }
+
 				mPlayButton.performClick();
-				
-        		//Globals.tp.play();
+
+                final int realPosition;
+                if (!isShuffle) {
+                    realPosition = mCurrentPosition;
+                } else {
+                    realPosition = shuffledList.get(mCurrentPosition) % mFileList.size();
+                }
+
+                //Globals.tp.play();
 				tpPlay();
 				//Globals.tc.play();
 				tcPlay();
         		
         		//Globals.tp.setPosition(newPosition);
-				tpSetPosition(newPosition);
+				tpSetPosition(realPosition);
 			}
 		});
 	    
@@ -262,10 +373,21 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	    mProgressBar.setMax(1000);
 	    mProgressBar.setProgress(0);
 
-		mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-		mLock = mWifiManager.createWifiLock("music-transmitter-wifi-lock");
-		mLock.setReferenceCounted(false);
-		mLock.acquire();
+	    mProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (b) {
+                    double progress = i / 1000.0;
+                    tpSeek(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
 
 		//MusicTransmitterNotification.showNotification(this);
 
@@ -283,7 +405,7 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		}
 	}
 	*/
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -302,6 +424,8 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	protected void onDestroy() {
 		Log.i(LOG_TAG_ACTIVITY, "on destroy");
 
+		MusicTransmitterNotification.hideNotification(this);
+
         Intent intent = new Intent(MusicTransmitterService.STOP_SERVIVE);
         sendBroadcast(intent);
 
@@ -311,7 +435,6 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		//Intent intent = new Intent(MusicTransmitterService.STOP_SERVIVE);
 		//sendBroadcast(intent);
 		TrackInfo.destroy();
-		mLock.release();
 		
 		super.onDestroy();
 	}
@@ -329,12 +452,16 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		
 		switch (item.getItemId()) {
 	        case R.id.item_menu_add_track:
-	        	openMP3File(null);
+	        	openMP3File(null, false);
 	        	return true;
 	        
 	        case R.id.item_menu_add_folder:
-		        openDir(null);
+		        openDir(null, false);
 	        	return true;
+
+			case R.id.item_menu_add_mic:
+				addMic(false);
+				return true;
 	        	
 	        case R.id.item_menu_remove_track:
 		        Toast.makeText(this, getString(R.string.toast_long_tap), Toast.LENGTH_LONG).show();
@@ -345,11 +472,11 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	        	return true;
 	        	
 	        case R.id.item_menu_export_m3u8:
-	        	exportM3U8(null);
+	        	exportM3U8(null, false);
 	        	return true;
 	        	
 	        case R.id.item_menu_import_m3u8:	
-	        	importM3U8(null);
+	        	importM3U8(null, false);
 	        	return true;
 	        	
 	        case R.id.item_review_app:
@@ -441,13 +568,13 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
         File f = new File(filePath);
 		
 		if (requestCode==REQUEST_OPEN_FILE&&resultCode==RESULT_OK) {
-			openMP3File(f);
+			openMP3File(f, true);
 		} else if (requestCode==REQUEST_OPEN_DIR&&resultCode==RESULT_OK) {
-			openDir(f);
+			openDir(f, true);
 		} else if (requestCode==REQUEST_EXPORT_LIST&&resultCode==RESULT_OK) {			
-			exportM3U8(f);
+			exportM3U8(f, true);
 		} else if (requestCode==REQUEST_IMPORT_LIST&&resultCode==RESULT_OK) {
-			importM3U8(f);
+			importM3U8(f, true);
 		} 
 		
 	}
@@ -493,21 +620,19 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	
 	@Override
 	public void setPosition(final int position) {
-		mCurrentPosition = position;
-		
-		if (position<0||position>=mFileList.size()) {
-		//if (position<0||position>=Globals.fileList.size()) {
-			return;
-		}
-		
 		runOnUiThread(new Runnable(){
 			@Override
 			public void run() {
 				mAdapter.setCurrentPosition(position);
 				mListView.setSelection(position);
 
-                TrackInfo trackInfo = mAdapter.getItem(mCurrentPosition);
-                MusicTransmitterNotification.showNotification(MusicTransmitterActivity.this, trackInfo.artist, trackInfo.title, isPlaying);
+				if (position > 0 && position < mAdapter.getCount()) {
+					TrackInfo trackInfo = mAdapter.getItem(position);
+					//Log.e("artist", trackInfo.artist == null ? "null" : trackInfo.artist);
+					//Log.e("title", trackInfo.title == null ? "null" : trackInfo.title);
+
+					MusicTransmitterNotification.showNotification(MusicTransmitterActivity.this, trackInfo.artist, trackInfo.title, isPlaying);
+				}
 			}
 		});
 	}
@@ -518,9 +643,9 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 			@Override
 			public void run() {
 				mAdapter.setTrackList(trackList);
-				setPosition(mCurrentPosition);
 				//Globals.tp.setFileList(fileList);
 				tpSetFileList(fileList);
+				setPosition(mCurrentPosition);
 			}
 		});
 	}
@@ -552,14 +677,25 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		});
 	}
 
+	@Override
+	public void errorMsg(final String msg) {
+		Toast.makeText(MusicTransmitterActivity.this, msg, Toast.LENGTH_LONG).show();
+	}
+
 	private void prepareAndStart() {
-		Intent intent = new Intent(this, MusicTransmitterService.class);
-		String[] filePathArray = new String[mFileList.size()];
-		for (int i=0; i<mFileList.size(); i++) {
-			filePathArray[i] = mFileList.get(i).getAbsolutePath();
+		if (!MusicTransmitterService.isInstanceRunning) {
+
+            Intent intent = new Intent(this, MusicTransmitterService.class);
+            String[] filePathArray = new String[mFileList.size()];
+            for (int i=0; i<mFileList.size(); i++) {
+                filePathArray[i] = mFileList.get(i).getAbsolutePath();
+            }
+            intent.putExtra("filePathArray", filePathArray);
+            startService(intent);
+		} else {
+			Intent intent = new Intent(MusicTransmitterService.STATUS_REQUEST);
+			sendBroadcast(intent);
 		}
-		intent.putExtra("filePathArray", filePathArray);
-		startService(intent);
 
 		//Mp3Decoder decoder = new JLayerMp3Decoder();
 		
@@ -654,6 +790,8 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		};
 		IntentFilter clickFwdFilter = new IntentFilter(MusicTransmitterNotification.CLICK_FWD);
 		registerReceiver(clickFwdReceiver, clickFwdFilter);
+		IntentFilter nextTrackFilter = new IntentFilter(UIController.NEXT_TRACK);
+		registerReceiver(clickFwdReceiver, nextTrackFilter);
 
         BroadcastReceiver incomingCallReceiver = new BroadcastReceiver() {
             @Override
@@ -668,7 +806,7 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	}
 	
 	private void refreshList() {
-		saveFileList(null);
+		saveFileList(null, false);
 		
 		TrackInfo.setFileList(mFileList);
 		//TrackInfo.setFileList(Globals.fileList);
@@ -689,6 +827,15 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		if (tmp.exists()) mCurrentListDir = tmp;
 		tmp = new File(musicDirPath);
 		if (tmp.exists()) mCurrentMusicDir = tmp;
+
+		reviewOfferWasShown = sp.getBoolean("reviewOfferWasShown", false);
+		long installTime = sp.getLong("installTime", System.currentTimeMillis());
+		{
+			SharedPreferences.Editor editor = sp.edit();
+			editor.putLong("installTime", installTime);
+			editor.commit();
+		}
+		hoursFromInstall = (int)((System.currentTimeMillis() - installTime)/(3600*1000));
 	}
 	
 	private void saveSettings() {
@@ -697,6 +844,7 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		editor.putString("listDirPath", mCurrentListDir.getAbsolutePath());
 		editor.putString("musicDirPath", mCurrentMusicDir.getAbsolutePath());
 		editor.putInt("volume", Globals.volume);
+		editor.putBoolean("reviewOfferWasShown", reviewOfferWasShown);
 		editor.commit();
 	}
 
@@ -756,8 +904,60 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		dialog.show();
 	}
 
-	private void openMP3File(File selectedFile) {
-		if (selectedFile==null) {
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String permissions[], int[] grantResults) {
+		if (grantResults.length > 0
+				&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+			switch (requestCode) {
+				case PERMISSION_SDCARD_REQUEST_OPEN_MP3:
+					openMP3File(null, true);
+					return;
+				case PERMISSION_SDCARD_REQUEST_OPEN_DIR:
+					openDir(null, true);
+					return;
+				case PERMISSION_SDCARD_REQUEST_EXPORT_M3U8:
+					exportM3U8(null, true);
+					return;
+				case PERMISSION_SDCARD_REQUEST_IMPORT_M3U8:
+					importM3U8(null, true);
+					return;
+				case PERMISSION_SDCARD_REQUEST_LOAD_FILELIST:
+					loadFileList(null, true);
+					return;
+				case PERMISSION_SDCARD_REQUEST_SAVE_FILELIST:
+					saveFileList(null, true);
+					return;
+				case PERMISSION_MIC_REQUEST:
+					addMic(true);
+					return;
+			}
+		} else {
+			switch (requestCode) {
+				case PERMISSION_MIC_REQUEST:
+					Toast.makeText(this, "No microphone access", Toast.LENGTH_SHORT).show();
+					return;
+				default:
+					Toast.makeText(this, "No SDCard access", Toast.LENGTH_SHORT).show();
+					return;
+			}
+		}
+	}
+
+	private void openMP3File(File selectedFile, boolean permissionsOk) {
+		if (!permissionsOk) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				if (checkSelfPermission(PERMISSION_READ)
+						== PackageManager.PERMISSION_DENIED) {
+					requestPermissions(PERMISSIONS_SDCARD, PERMISSION_SDCARD_REQUEST_OPEN_MP3);
+				} else {
+					openMP3File(null, true);
+				}
+			} else {
+				openMP3File(null, true);
+			}
+		} else if (selectedFile==null) {
 			Intent intent = new Intent(this, FileChooserActivity.class);
 		    intent.putExtra(FileChooserActivity.INPUT_START_FOLDER, mCurrentMusicDir.getAbsolutePath());
 		    intent.putExtra(FileChooserActivity.INPUT_FOLDER_MODE, false);
@@ -774,9 +974,38 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 			saveSettings();
 		}
 	}
-	
-	private void openDir(File selectedDir) {
-		if (selectedDir==null) {
+
+	private void addMic(boolean permissionsOk) {
+		if (!permissionsOk) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				if (checkSelfPermission(PERMISSION_MIC)
+						== PackageManager.PERMISSION_DENIED) {
+					requestPermissions(PERMISSIONS_MIC, PERMISSION_MIC_REQUEST);
+				} else {
+					addMic(true);
+				}
+			} else {
+				addMic(true);
+			}
+		} else {
+			mFileList.add(new File(TrackInfo.MIC_PATH));
+			refreshList();
+		}
+	}
+
+	private void openDir(File selectedDir, boolean permissionsOk) {
+		if (!permissionsOk) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				if (checkSelfPermission(PERMISSION_READ)
+						== PackageManager.PERMISSION_DENIED) {
+					requestPermissions(PERMISSIONS_SDCARD, PERMISSION_SDCARD_REQUEST_OPEN_DIR);
+				} else {
+					openDir(null, true);
+				}
+			} else {
+				openDir(null, true);
+			}
+		} else if (selectedDir==null) {
 			Intent intent = new Intent(this, FileChooserActivity.class);
 		    intent.putExtra(FileChooserActivity.INPUT_START_FOLDER, mCurrentMusicDir.getAbsolutePath());
 		    intent.putExtra(FileChooserActivity.INPUT_FOLDER_MODE, true);
@@ -852,8 +1081,19 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
         dialog.show();
 	}
 	
-	private void exportM3U8(File selectedFile) {
-		if (selectedFile==null) {
+	private void exportM3U8(File selectedFile, boolean permissionsOk) {
+		if (!permissionsOk) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				if (checkSelfPermission(PERMISSION_READ)
+						== PackageManager.PERMISSION_DENIED) {
+					requestPermissions(PERMISSIONS_SDCARD, PERMISSION_SDCARD_REQUEST_EXPORT_M3U8);
+				} else {
+					exportM3U8(null, true);
+				}
+			} else {
+				exportM3U8(null, true);
+			}
+		} else if (selectedFile==null) {
 			Intent intent = new Intent(this, FileChooserActivity.class);
 		    intent.putExtra(FileChooserActivity.INPUT_START_FOLDER, mCurrentListDir.getAbsolutePath());
 		    intent.putExtra(FileChooserActivity.INPUT_FOLDER_MODE, false);
@@ -869,12 +1109,23 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 			mCurrentListDir = selectedFile.getParentFile();
 			saveSettings();
 			
-			saveFileList(selectedFile.getAbsolutePath());
+			saveFileList(selectedFile.getAbsolutePath(), true);
 		}
 	}
 	
-	private void importM3U8(File selectedFile) {
-		if (selectedFile==null) {
+	private void importM3U8(File selectedFile, boolean permissionsOk) {
+		if (!permissionsOk) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				if (checkSelfPermission(PERMISSION_READ)
+						== PackageManager.PERMISSION_DENIED) {
+					requestPermissions(PERMISSIONS_SDCARD, PERMISSION_SDCARD_REQUEST_IMPORT_M3U8);
+				} else {
+					importM3U8(null, true);
+				}
+			} else {
+				importM3U8(null, true);
+			}
+		} else if (selectedFile==null) {
 			Intent intent = new Intent(this, FileChooserActivity.class);
 		    intent.putExtra(FileChooserActivity.INPUT_START_FOLDER, mCurrentListDir.getAbsolutePath());
 		    intent.putExtra(FileChooserActivity.INPUT_FOLDER_MODE, false);
@@ -884,87 +1135,113 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 			mCurrentListDir = selectedFile.getParentFile();
 			saveSettings();
 			
-			loadFileList(selectedFile.getAbsolutePath());
+			loadFileList(selectedFile.getAbsolutePath(), true);
 			refreshList();
 		}
 	}
 	
-	private void loadFileList(String path) {
-		mFileList = new ArrayList<File>();
-		//Globals.fileList = new ArrayList<File>();
-		
-		File f;
-		if (path==null) {
-			File appDir = getExternalFilesDir(null);
-			if (appDir==null) {
-				appDir = getFilesDir();
-			}
-			if (appDir==null) {
-				appDir = Environment.getExternalStorageDirectory();
-			}
-			if (appDir==null) {
-				return;
-			}
-			
-			path = appDir.getAbsolutePath() + File.separator + "current.m3u8";
-			f = new File(path);
-		} else {
-			f = new File(path);
-		}
-		if (!f.exists()) return;
-		
-		try {
-			Scanner sc = new Scanner(new FileInputStream(f));
-			
-			while(sc.hasNextLine()) {
-				String trackPath = sc.nextLine();
-				
-				File track = new File(trackPath);
-				if (track.exists()) {
-					mFileList.add(track);
-					//Globals.fileList.add(track);
+	private void loadFileList(String path, boolean permissionsOk) {
+		if (!permissionsOk) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				if (checkSelfPermission(PERMISSION_READ)
+						== PackageManager.PERMISSION_DENIED) {
+					requestPermissions(PERMISSIONS_SDCARD, PERMISSION_SDCARD_REQUEST_LOAD_FILELIST);
+				} else {
+					loadFileList(null, true);
 				}
+			} else {
+				loadFileList(null, true);
 			}
-			
-			sc.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		} else {
+			mFileList = new ArrayList<File>();
+			//Globals.fileList = new ArrayList<File>();
+
+			File f;
+			if (path == null) {
+				File appDir = getExternalFilesDir(null);
+				if (appDir == null) {
+					appDir = getFilesDir();
+				}
+				if (appDir == null) {
+					appDir = Environment.getExternalStorageDirectory();
+				}
+				if (appDir == null) {
+					return;
+				}
+
+				path = appDir.getAbsolutePath() + File.separator + "current.m3u8";
+				f = new File(path);
+			} else {
+				f = new File(path);
+			}
+			if (!f.exists()) return;
+
+			try {
+				Scanner sc = new Scanner(new FileInputStream(f));
+
+				while (sc.hasNextLine()) {
+					String trackPath = sc.nextLine();
+
+					File track = new File(trackPath);
+					if (track.exists() || track.getAbsolutePath().equals(TrackInfo.MIC_PATH)) {
+						mFileList.add(track);
+						//Globals.fileList.add(track);
+					}
+				}
+
+				sc.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	private void saveFileList(String path) {
-		File f;
-		if (path==null) {
-			File appDir = getExternalFilesDir(null);
-			if (appDir==null) {
-				appDir = getFilesDir();
+	private void saveFileList(String path, boolean permissionsOk) {
+		if (!permissionsOk) {
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				if (checkSelfPermission(PERMISSION_READ)
+						== PackageManager.PERMISSION_DENIED) {
+					requestPermissions(PERMISSIONS_SDCARD, PERMISSION_SDCARD_REQUEST_SAVE_FILELIST);
+				} else {
+					saveFileList(null, true);
+				}
+			} else {
+				saveFileList(null, true);
 			}
-			if (appDir==null) {
-				appDir = Environment.getExternalStorageDirectory();
-			}
-			if (appDir==null) {
-				return;
-			}
-			
-			path = appDir.getAbsolutePath() + File.separator + "current.m3u8";
-			f = new File(path);
 		} else {
-			f = new File(path);
-		}
-		
-		try {
-			PrintWriter pw = new PrintWriter(new FileOutputStream(f));
-			
-			for (int i=0; i<mFileList.size(); i++) {
-			//for (int i=0; i<Globals.fileList.size(); i++) {
-				pw.println(mFileList.get(i).getAbsolutePath());
-				//pw.println(Globals.fileList.get(i).getAbsolutePath());
+			File f;
+			if (path == null) {
+				File appDir = getExternalFilesDir(null);
+				if (appDir == null) {
+					appDir = getFilesDir();
+				}
+				if (appDir == null) {
+					appDir = Environment.getExternalStorageDirectory();
+				}
+				if (appDir == null) {
+					return;
+				}
+
+				path = appDir.getAbsolutePath() + File.separator + "current.m3u8";
+				f = new File(path);
+			} else {
+				f = new File(path);
 			}
-			
-			pw.flush();
-			pw.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+
+			try {
+				PrintWriter pw = new PrintWriter(new FileOutputStream(f));
+
+				for (int i = 0; i < mFileList.size(); i++) {
+					//for (int i=0; i<Globals.fileList.size(); i++) {
+					pw.println(mFileList.get(i).getAbsolutePath());
+					//pw.println(Globals.fileList.get(i).getAbsolutePath());
+				}
+
+				pw.flush();
+				pw.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -984,6 +1261,13 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 	@Override
 	public void tpPause() {
 		Intent intent = new Intent(ServiceInterface.TP_PAUSE);
+		sendBroadcast(intent);
+	}
+
+	@Override
+	public void tpSeek(double progress) {
+		Intent intent = new Intent(ServiceInterface.TP_SEEK);
+		intent.putExtra("progress", progress);
 		sendBroadcast(intent);
 	}
 
@@ -1016,4 +1300,14 @@ public class MusicTransmitterActivity extends ActionBarActivity implements UI, S
 		intent.putExtra("volume", volume);
 		sendBroadcast(intent);
 	}
+
+	@Override
+    public void nextTrack() {
+	    runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mFwdButton.performClick();
+            }
+        });
+    }
 }

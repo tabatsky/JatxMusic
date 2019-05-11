@@ -30,9 +30,11 @@ public abstract class Mp3Decoder {
 	public abstract void setPath(String path) throws Mp3DecoderException;
 	
 	public abstract void setFile(File f) throws Mp3DecoderException;
-	
+
 	public abstract Frame readFrame() throws Mp3DecoderException, WrongFrameException, TrackFinishException;
-	
+
+	public abstract void seek(double progress) throws Mp3DecoderException;
+
 	public static class Mp3DecoderException extends Exception {
 		private static final long serialVersionUID = -5257283039222447187L;
 

@@ -17,10 +17,13 @@ public interface UIController {
 	String SET_WIFI_STATUS = "jatx.musictransmitter.android.setWifiStatus";
 	String SET_POSITION = "jatx.musictransmitter.android.setPosition";
 	String SET_CURRENT_TIME = "jatx.musictransmitter.android.setCurrentTime";
+	String NEXT_TRACK = "jatx.musictransmitter.android.nextTrack";
 	String FORCE_PAUSE = "jatx.musictransmitter.android.forcePause";
 
 	void setWifiStatus(boolean status);
 	void setPosition(int position);
 	void setCurrentTime(float currentMs, float trackLengthMs);
 	void forcePause();
+	void errorMsg(String msg);
+	void nextTrack();
 }

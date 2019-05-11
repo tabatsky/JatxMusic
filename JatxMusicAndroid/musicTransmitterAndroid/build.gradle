@@ -5,16 +5,18 @@ android {
         config {
             keyAlias 'key'
             keyPassword 'dexpp37'
-            storeFile file('/workspace/JatxMusic/MusicTransmitterAndroid/keystore')
+            storeFile file('J:\\Studio\\JatxMusicAndroid\\transmitter.keystore')
             storePassword 'dexpp37'
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "jatx.musictransmitter.android"
-        minSdkVersion 11
-        targetSdkVersion 25
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 18
+        versionName '1.5.1'
     }
     buildTypes {
         release {
@@ -38,8 +40,8 @@ android {
 dependencies {
     compile project(':aFileDialog')
     compile project(':musicCommons')
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:support-v4:28.+'
+    compile 'com.android.support:appcompat-v7:28.+'
     compile files('libs/jaudiotagger-2.0.3.jar')
     compile files('libs/jl1.0.1.jar')
 }

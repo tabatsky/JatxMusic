@@ -10,10 +10,9 @@
  ******************************************************************************/
 package jatx.musiccommons.transmitter;
 
-import jatx.musiccommons.transmitter.Mp3Decoder.Mp3DecoderException;
-import jatx.musiccommons.transmitter.Mp3Decoder.TrackFinishException;
 import jatx.musiccommons.util.Frame.WrongFrameException;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,14 +43,16 @@ public class TransmitterPlayer extends Thread {
 	volatile boolean isPlaying;
 	
 	volatile boolean mForceDisconnectFlag;
-	
+
+	volatile boolean microphoneOk;
+
 	volatile String mPath;
 	volatile Mp3Decoder mDecoder;
 	
 	volatile long t1;
 	volatile long t2;
 	volatile float dt;
-	
+
 	public TransmitterPlayer(List<File> fileList, UI ui, Mp3Decoder decoder) {
 		ref = new WeakReference<UI>(ui);
 		setFileList(fileList);
@@ -61,8 +62,9 @@ public class TransmitterPlayer extends Thread {
 		
 		mPath = "";
 		mDecoder = decoder;
+
 	}
-	
+
 	public void setFileList(List<File> fileList) {
 		mFileList = new ArrayList<File>(fileList);
 		mCount = mFileList.size();
@@ -75,12 +77,35 @@ public class TransmitterPlayer extends Thread {
 	public void play() {
 		System.out.println("(player) play");
 		isPlaying = true;
+		if (mPath.equals(TrackInfo.MIC_PATH)) {
+            try {
+                Microphone.start();
+                microphoneOk = true;
+            } catch (LineUnavailableException e) {
+                e.printStackTrace();
+                microphoneOk = false;
+            }
+		}
 	}
 	
 	public void pause() {
 		System.out.println("(player) pause");
 		isPlaying = false;
+		if (mPath.equals(TrackInfo.MIC_PATH)) {
+			Microphone.stop();
+		}
 	}
+
+	public void seek(double progress) {
+	    boolean needToPlay = isPlaying;
+	    pause();
+	    try {
+            mDecoder.seek(progress);
+        } catch (Mp3Decoder.Mp3DecoderException e) {
+	        e.printStackTrace();
+        }
+        if (needToPlay) play();
+    }
 	
 	private void forcePause() {
 		System.out.println("(player) force pause");
@@ -93,7 +118,7 @@ public class TransmitterPlayer extends Thread {
 			ui.forcePause();
 		}
 	}
-	
+
 	public void setPosition(final int position) {		
 		pause();
 		
@@ -101,10 +126,10 @@ public class TransmitterPlayer extends Thread {
 		
 		mPosition = position;
 		if (mPosition>=mCount) mPosition = 0;
+
+		System.out.println("(player) position: " + Integer.valueOf(mPosition).toString());
 		
-		System.out.println("(player) position: " + Integer.valueOf(position).toString());
-		
-		mPath = mFileList.get(position).getAbsolutePath();
+		mPath = mFileList.get(mPosition).getAbsolutePath();
 		System.out.println("(player) path: " + mPath);
 	
 		final UI ui = ref.get();
@@ -112,24 +137,27 @@ public class TransmitterPlayer extends Thread {
 			final String info = TrackInfo.getByPath(mPath).toString();
 			System.out.println("(player) info: " + info);
 			
-			ui.setPosition(mPosition);	
+			ui.setPosition(mPosition);
 		}
-		
-		try {
-			mDecoder.setPath(mPath);
-			mDecoder.setPosition(mPosition);
-			//mDecoder.resetTimeFlag = true;
-		} catch (Mp3DecoderException e) {
-			System.err.println("(player) " + e.getMessage());
-		}
-		
-		play();
+
+        try {
+            mDecoder.setPath(mPath);
+            mDecoder.setPosition(mPosition);
+            //mDecoder.resetTimeFlag = true;
+        } catch (Mp3Decoder.Mp3DecoderException e) {
+            System.err.println("(player) " + e.getMessage());
+        }
+
+        play();
 	}
 	
 	public void nextTrack() {
 		try {
-			final int pos = (mPosition+1)%mCount;
-			setPosition(pos);
+			final UI ui = ref.get();
+			if (ui!=null) {
+				ui.nextTrack();
+			}
+			Thread.sleep(100);
 		} catch (Exception e) {
 			e.printStackTrace();
 			forcePause();
@@ -266,12 +294,16 @@ public class TransmitterPlayer extends Thread {
 				}
 				
 				try {
-					data = mDecoder.readFrame().toByteArray();
-				} catch (Mp3DecoderException e) {
+                    if (mPath.equals(TrackInfo.MIC_PATH)) {
+                        data = Microphone.readFrame(mPosition).toByteArray();
+                    } else {
+                        data = mDecoder.readFrame().toByteArray();
+                    }
+				} catch (Mp3Decoder.Mp3DecoderException |Microphone.MicrophoneReadException e) {
 					data = null;
 					e.printStackTrace();
 					Thread.sleep(200);
-				} catch (TrackFinishException e) {
+				} catch (Mp3Decoder.TrackFinishException e) {
 					data = null;
 					System.out.println("(player) track finish");
 					nextTrack();

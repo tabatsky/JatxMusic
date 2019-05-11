@@ -7,6 +7,7 @@
     <string name="string_add">Add</string>
     <string name="string_add_track">Add Track</string>
     <string name="string_add_folder">Add Folder</string>
+	<string name="string_add_mic">Add Microphone</string>
 	<string name="string_remove">Remove</string>
 	<string name="string_remove_track">Remove Track</string>
 	<string name="string_remove_all">Remove All</string>
@@ -39,6 +40,7 @@
 	<string name="item_review_app">Review App</string>
 	<string name="item_show_manual">Show manual</string>
 	<string name="item_show_my_ip">Find my IP</string>
+	<string name="item_other_apps">Other apps</string>
 	<string name="item_receiver_android">Receiver for Android</string>
 	<string name="item_javafx_version">Version for JavaFX</string>
 	<string name="item_receiver_javafx">Receiver for JavaFX</string>
@@ -67,4 +69,10 @@
 	<string name="not_detected_message">Not detected\nMay be Wi-Fi is down</string>
 
 	<string name="really_quit">Are you really want to quit app?</string>
+
+	<string name="need_you_help">Need Your Help</string>
+	<string name="do_you_like_this_app">
+		Do you like this application, and do you want it to continue developing?
+        \nYou can help in its promotion by putting an estimate or writing a review.
+	</string>
 </resources>

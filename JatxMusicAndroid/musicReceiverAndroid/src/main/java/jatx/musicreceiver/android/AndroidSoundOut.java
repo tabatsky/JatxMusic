@@ -39,6 +39,7 @@ public class AndroidSoundOut implements SoundOut {
 		aTrack = new AudioTrack(AudioManager.STREAM_MUSIC, 
 				frameRate, chFormat, AudioFormat.ENCODING_PCM_16BIT,
 				bufferSize, AudioTrack.MODE_STREAM);
+
 		aTrack.play();
 	}
 

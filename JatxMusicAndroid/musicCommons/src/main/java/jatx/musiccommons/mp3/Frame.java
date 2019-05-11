@@ -13,6 +13,7 @@ package jatx.musiccommons.mp3;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import javazoom.jl.decoder.SampleBuffer;
 
@@ -215,7 +216,21 @@ public class Frame {
 		
 		return result;
 	}
-	
+
+	public static Frame fromMicRawData(byte[] rawData, int dataSize, int position, int sampleRate) {
+		Frame f = new Frame();
+
+		f.position = position;
+
+		f.freq = sampleRate;
+		f.channels = 2;
+
+		f.data = Arrays.copyOf(rawData, dataSize);
+		f.size = dataSize;
+
+		return f;
+	}
+
 	public static class WrongFrameException extends Exception {
 		private static final long serialVersionUID = 1768474402107432418L;
 		

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package jatx.musicreceiver.commons;
 
+import android.util.Log;
+
 import jatx.debug.Debug;
 import jatx.musicreceiver.interfaces.ServiceController;
 
@@ -125,6 +127,7 @@ public class ReceiverController extends Thread {
 					Thread.sleep(50);
 					cmdSkipped++;
 					if (cmdSkipped>7) {
+						Log.e("cmd skipped", "" + cmdSkipped);
 						finishFlag = true;
 					}
 				}

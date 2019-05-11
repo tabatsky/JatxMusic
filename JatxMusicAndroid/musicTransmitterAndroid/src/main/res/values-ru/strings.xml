@@ -7,6 +7,7 @@
     <string name="string_add">Добавить</string>
     <string name="string_add_track">Добавить трек</string>
     <string name="string_add_folder">Добавить папку</string>
+	<string name="string_add_mic">Добавить микрофон</string>
 	<string name="string_remove">Удалить</string>
 	<string name="string_remove_track">Удалить трек</string>
 	<string name="string_remove_all">Удалить всё</string>
@@ -39,6 +40,7 @@
 	<string name="item_review_app">Оценить приложение</string>
 	<string name="item_show_manual">Показать инструкцию</string>
 	<string name="item_show_my_ip">Узнать мой IP</string>
+	<string name="item_other_apps">Еще приложения</string>
 	<string name="item_receiver_android">Приемник для Android</string>
 	<string name="item_javafx_version">Версия для JavaFX</string>
 	<string name="item_receiver_javafx">Приемник для JavaFX</string>
@@ -67,5 +69,11 @@
 	<string name="not_detected_message">Не определено\nВозможно Wi-Fi отключен</string>
 
 	<string name="really_quit">Вы действительно хотите закрыть приложение?</string>
+
+	<string name="need_you_help">Нужна Ваша помощь</string>
+	<string name="do_you_like_this_app">
+        Вам нравится это приложение, и Вы хотите, чтобы оно развивалось и дальше?
+        \nВы можете помочь в его продвижении, поставив оценку или написав отзыв.
+    </string>
 </resources>
 

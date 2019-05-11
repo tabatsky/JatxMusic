@@ -50,4 +50,26 @@
         	android:textColor="@color/black"
             />        
     </LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="left"
+		>
+		<CheckBox
+			android:id="@+id/bluetooth"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:gravity="left|center_vertical"
+			/>
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/string_use_bluetooth"
+			android:gravity="left|center_vertical"
+			android:textSize="27sp"
+			android:textColor="@color/black"
+			/>
+	</LinearLayout>
 </LinearLayout>

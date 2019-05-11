@@ -1,19 +1,32 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    signingConfigs {
+        config {
+            keyAlias 'key'
+            keyPassword 'dexpp37'
+            storeFile file('J:\\Studio\\JatxMusicAndroid\\receiver.keystore')
+            storePassword 'dexpp37'
+        }
+    }
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "jatx.musicreceiver.android"
-        minSdkVersion 8
-        targetSdkVersion 21
+        minSdkVersion 14
+        targetSdkVersion 28
+        versionCode 10
+        versionName "1.3.4"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
@@ -24,6 +37,6 @@ android {
 
 dependencies {
     compile project(':musicCommons')
-    compile 'com.android.support:support-v4:22.2.1'
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:support-v4:28+'
+    compile 'com.android.support:appcompat-v7:28+'
 }

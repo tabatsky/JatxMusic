@@ -20,13 +20,14 @@
         android:background="@color/black"
         />
     
-    <ProgressBar
+    <SeekBar
         android:id="@+id/progress_bar"
         android:indeterminate="false"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/progress_height" 
         android:progressDrawable="@drawable/progress"
+		android:thumb="@drawable/thumb"
         />
     
     <View
@@ -149,8 +150,28 @@
         	android:scaleType="fitXY"
         	android:background="@color/grayE"
             />
-        
-        
+
+        <ImageButton
+            android:id="@+id/repeat"
+            android:layout_width="@dimen/button_size"
+            android:layout_height="@dimen/button_size"
+            android:padding="@dimen/button_padding"
+            android:src="@drawable/ic_repeat"
+            android:scaleType="fitXY"
+            android:background="@color/grayC"
+            />
+
+        <ImageButton
+            android:id="@+id/shuffle"
+            android:layout_width="@dimen/button_size"
+            android:layout_height="@dimen/button_size"
+            android:padding="@dimen/button_padding"
+            android:src="@drawable/ic_shuffle"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            android:background="@color/grayC"
+            />
+
     </LinearLayout>
 
     <View

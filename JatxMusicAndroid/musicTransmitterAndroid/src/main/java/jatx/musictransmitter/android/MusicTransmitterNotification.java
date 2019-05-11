@@ -72,4 +72,9 @@ public class MusicTransmitterNotification /*extends Notification*/ {
 
         notificationManager.notify(1, notification);
     }
+
+    public static void hideNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(1);
+    }
 }

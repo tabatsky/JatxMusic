@@ -12,6 +12,7 @@
         	<group>
 	    		<item android:id="@+id/item_menu_add_track" android:title="@string/string_add_track"></item>
 	    		<item android:id="@+id/item_menu_add_folder" android:title="@string/string_add_folder"></item>
+				<item android:id="@+id/item_menu_add_mic" android:title="@string/string_add_mic"></item>
 	    	</group>
 	    </menu>
 	</item>
@@ -52,7 +53,11 @@
         	<group>
 				<item android:id="@+id/item_show_manual" android:title="@string/item_show_manual"></item>
 				<item android:id="@+id/item_show_my_ip" android:title="@string/item_show_my_ip"></item>
-        	    <item android:id="@+id/item_receiver_android" android:title="@string/item_receiver_android"></item>
+				<item android:id="@+id/item_other_apps" android:title="@string/item_other_apps">
+					<menu>
+						<item android:id="@+id/item_receiver_android" android:title="@string/item_receiver_android"></item>
+					</menu>
+				</item>
         	    <!-- <item android:id="@+id/item_javafx_version" android:title="@string/item_javafx_version"></item> -->
         	    <item android:id="@+id/item_receiver_javafx" android:title="@string/item_receiver_javafx"></item> 
         	    <item android:id="@+id/item_transmitter_javafx" android:title="@string/item_transmitter_javafx"></item>

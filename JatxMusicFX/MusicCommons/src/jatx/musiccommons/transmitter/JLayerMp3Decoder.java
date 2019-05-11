@@ -33,9 +33,12 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 	private Decoder mDecoder = null;
 	private Bitstream mBitStream = null;
 	private int mPosition = 0;
+	private File mCurrentFile = null;
 	
 	private float msFrame = 0f;
-	
+
+	private boolean isMicActive = false;
+
 	@Override
 	public void setPosition(int position) {
 		mPosition = position;
@@ -43,8 +46,13 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 	
 	@Override
 	public void setPath(String path) throws Mp3DecoderException {
-		File f = new File(path);
-		setFile(f);
+		if (!path.equals(TrackInfo.MIC_PATH)) {
+			File f = new File(path);
+			setFile(f);
+			isMicActive = false;
+		} else {
+			isMicActive = true;
+		}
 	}
 	
 	@Override
@@ -52,7 +60,9 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 		if (f==null||!f.exists()) {
 			throw new Mp3DecoderException("File Read Error");
 		}
-		
+
+		mCurrentFile = f;
+
 		try {
 			AudioFile af;
 			af = AudioFileIO.read(f);
@@ -87,6 +97,8 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 	
 	@Override
 	public synchronized Frame readFrame() throws Mp3DecoderException, WrongFrameException, TrackFinishException {
+		if (isMicActive) return null;
+
 		Frame f = null;
 		
 		try {			
@@ -105,8 +117,15 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 			msRead += msFrame;
 			msTotal += msFrame;
 			currentMs += msFrame;
-				
-			SampleBuffer output = (SampleBuffer) mDecoder.decodeFrame(frameHeader, mBitStream);
+
+			SampleBuffer output;
+			try {
+				output = (SampleBuffer) mDecoder.decodeFrame(frameHeader, mBitStream);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				//Log.e("readFrame", "ArrayIndexOutOfBounds");
+				mBitStream.closeFrame();
+				throw new TrackFinishException();
+			}
 			
 			f = Frame.fromSampleBuffer(output, mPosition);
 				
@@ -120,6 +139,34 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 		} finally {}
 		
 		return f;
+	}
+
+
+	@Override
+	public void seek(double progress) throws Mp3DecoderException {
+		setFile(mCurrentFile);
+
+		try {
+			while (currentMs<trackLengthSec*1000.0*progress) {
+				Header frameHeader = null;
+				if (mBitStream != null) {
+					frameHeader = mBitStream.readFrame();
+				} else {
+					throw new Mp3DecoderException("bitstream: null");
+				}
+
+				msFrame = frameHeader.ms_per_frame();
+				msRead += msFrame;
+				//msTotal += msFrame;
+				currentMs += msFrame;
+
+				mBitStream.closeFrame();
+			}
+		} catch (BitstreamException e) {
+			throw new Mp3DecoderException(e);
+		}
+
+		resetTimeFlag = true;
 	}
 }
 

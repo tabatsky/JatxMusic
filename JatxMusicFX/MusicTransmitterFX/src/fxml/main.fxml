@@ -17,6 +17,7 @@
   				<items>
     				<MenuItem text="Add Track" id="open_file_item" />
     				<MenuItem text="Add Folder" id="open_folder_item" />
+					<MenuItem text="Add Microphone" id="add_mic_item" />
   				</items>
 			</Menu>
 		
@@ -94,6 +95,14 @@
                 </ImageView>
     		</graphic>
     	</Button>
+
+		<Button styleClass="my_button_bottom" id="toogle_shuffle">
+			<graphic>
+				<ImageView>
+					<Image url="/icons/ic_repeat.png"/>
+				</ImageView>
+			</graphic>
+        </Button>
 
     </HBox>
 </VBox>

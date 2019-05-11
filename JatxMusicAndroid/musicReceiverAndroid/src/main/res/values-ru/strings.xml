@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>    
-    
+<resources>
+    <string name="app_name">JatxMusic Receiver</string>
+
+    <string name="string_ok">Ok</string>
     <string name="string_exit">Выход</string>
     <string name="string_start">Старт</string>
     <string name="string_stop">Стоп</string>
     <string name="string_auto_connect">Авто-подключение</string>
 	<string name="string_input_host">Имя хоста или IP-адрес передатчика</string>
+    <string name="string_use_bluetooth">Использовать блютуз-гарнитуру</string>
     
     <string name="toast_disconnect">Соединение разорвано</string>
     <string name="toast_empty_host">Адрес хоста не может быть пустой строкой</string>
+    <string name="toast_bluetooth_error">Ошибка. Проверьте, что блютуз включен и гарнитура настроена</string>
     
     <string name="item_review_app">Оценить приложение</string>
+    <string name="item_other_apps">Еще приложения</string>
 	<string name="item_transmitter_android">Передатчик для Android</string>
 	<string name="item_javafx_version">Версия для JavaFX</string>
 	<string name="item_receiver_javafx">Приемник для JavaFX</string>
@@ -21,4 +26,10 @@
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="really_quit">Вы действительно хотите закрыть приложение?</string>
+
+    <string name="need_you_help">Нужна Ваша помощь</string>
+    <string name="do_you_like_this_app">
+        Вам нравится это приложение, и Вы хотите, чтобы оно развивалось и дальше?
+        \nВы можете помочь в его продвижении, поставив оценку или написав отзыв.
+    </string>
 </resources>

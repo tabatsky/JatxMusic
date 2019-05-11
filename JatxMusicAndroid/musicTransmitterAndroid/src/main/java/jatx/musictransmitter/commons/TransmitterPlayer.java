@@ -10,6 +10,9 @@
  ******************************************************************************/
 package jatx.musictransmitter.commons;
 
+import android.util.Log;
+
+import jatx.debug.Debug;
 import jatx.musiccommons.mp3.Frame.WrongFrameException;
 import jatx.musictransmitter.interfaces.UIController;
 
@@ -43,7 +46,9 @@ public class TransmitterPlayer extends Thread {
 	volatile boolean isPlaying;
 	
 	volatile boolean mForceDisconnectFlag;
-	
+
+	volatile boolean microphoneOk;
+
 	volatile String mPath;
 	volatile Mp3Decoder mDecoder;
 	
@@ -80,13 +85,44 @@ public class TransmitterPlayer extends Thread {
 	public void play() {
 		System.out.println("(player) play");
 		isPlaying = true;
+		if (mPath.equals(TrackInfo.MIC_PATH)) {
+			try {
+				Microphone.start();
+				microphoneOk = true;
+			} catch (Microphone.MicrophoneInitException e) {
+				Log.e("play", Debug.exceptionToString(e));
+				microphoneOk = false;
+				UIController ui = ref.get();
+				if (ui != null) {
+					ui.errorMsg("Error: cannot init microphone");
+				}
+			}
+		}
 	}
 	
 	public void pause() {
 		System.out.println("(player) pause");
 		isPlaying = false;
+        if (mPath.equals(TrackInfo.MIC_PATH)) {
+			try {
+				Microphone.stop();
+			} catch (Throwable e) {
+				Log.e("pause", Debug.exceptionToString(e));
+			}
+        }
 	}
-	
+
+	public void seek(double progress) {
+		boolean needToPlay = isPlaying;
+		pause();
+		try {
+			mDecoder.seek(progress);
+		} catch (Mp3Decoder.Mp3DecoderException e) {
+			e.printStackTrace();
+		}
+		if (needToPlay) play();
+	}
+
 	private void forcePause() {
 		System.out.println("(player) force pause");
 		isPlaying = false;
@@ -99,7 +135,7 @@ public class TransmitterPlayer extends Thread {
 			uiController.forcePause();
 		}
 	}
-	
+
 	public void setPosition(final int position) {		
 		pause();
 		
@@ -128,14 +164,17 @@ public class TransmitterPlayer extends Thread {
 		} catch (Mp3Decoder.Mp3DecoderException e) {
 			System.err.println("(player) " + e.getMessage());
 		}
-		
+
 		play();
 	}
 	
 	public void nextTrack() {
 		try {
-			final int pos = (mPosition+1)%mCount;
-			setPosition(pos);
+			final UIController uiController = ref.get();
+			if (uiController!=null) {
+				uiController.nextTrack();
+			}
+			Thread.sleep(100);
 		} catch (Exception e) {
 			e.printStackTrace();
 			forcePause();
@@ -275,11 +314,19 @@ public class TransmitterPlayer extends Thread {
 				}
 				
 				try {
-					data = mDecoder.readFrame().toByteArray();
+                    if (mPath.equals(TrackInfo.MIC_PATH)) {
+                        data = Microphone.readFrame(mPosition).toByteArray();
+                    } else {
+                        data = mDecoder.readFrame().toByteArray();
+                    }
 				} catch (Mp3Decoder.Mp3DecoderException e) {
-					data = null;
-					e.printStackTrace();
-					Thread.sleep(200);
+                    data = null;
+                    e.printStackTrace();
+                    Thread.sleep(200);
+                } catch (Microphone.MicrophoneReadException e) {
+                    data = null;
+                    e.printStackTrace();
+                    Thread.sleep(200);
 				} catch (Mp3Decoder.TrackFinishException e) {
 					data = null;
 					System.out.println("(player) track finish");

@@ -23,7 +23,9 @@ import org.jaudiotagger.tag.Tag;
 
 public class TrackInfo {
 	//private static volatile ConcurrentHashMap<String,TrackInfo> sMemoryCache = new ConcurrentHashMap<String,TrackInfo>();
-	
+
+	public static final String MIC_PATH = "/:mic:";
+
 	private static volatile List<File> sFileList = null;
 	private static volatile List<TrackInfo> sTrackInfoList = null;
 	
@@ -112,9 +114,25 @@ public class TrackInfo {
 	public static TrackInfo getByPath(String path) {
 		return getFromFile(new File(path));
 	}
-	
+
+	public static TrackInfo getMicInfo() {
+		TrackInfo info = new TrackInfo();
+		info.path = MIC_PATH;
+		info.artist = "Microphone";
+		info.title = "Microphone";
+		info.album = "Microphone";
+		info.year = "1970";
+		info.number = "0";
+		info.length = "00:00";
+		return info;
+	}
+
 	public static TrackInfo getFromFile(File f) {
-		if (f==null||!f.exists()) return null;
+		if (f!=null && f.getAbsolutePath().equals(MIC_PATH)) {
+			return getMicInfo();
+		}
+
+		if (f==null || !f.exists()) return null;
 		
 		final String path = f.getAbsolutePath();
 		final long lastModified = f.lastModified();
@@ -126,7 +144,7 @@ public class TrackInfo {
 		} 
 		*/
 		
-		TrackInfo info = null;
+		TrackInfo info;
 		if (sDBCache!=null) {
 			info = sDBCache.get(path, lastModified);
 			if (info!=null) {
@@ -232,8 +250,8 @@ public class TrackInfo {
 		}
 	}
 	
-	public static interface DBCache {
-		public TrackInfo get(String path, long lastModified);
-		public void put(TrackInfo info, long lastModified);
+	public interface DBCache {
+		TrackInfo get(String path, long lastModified);
+		void put(TrackInfo info, long lastModified);
 	}
 }

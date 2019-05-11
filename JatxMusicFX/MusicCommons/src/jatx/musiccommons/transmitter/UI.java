@@ -23,4 +23,6 @@ public interface UI {
 	public void setCurrentTime(float currentMs, float trackLengthMs);
 	
 	public void forcePause();
+
+	public void nextTrack();
 }

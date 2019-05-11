@@ -10,6 +10,8 @@
  ******************************************************************************/
 package jatx.musictransmitter.commons;
 
+import android.util.Log;
+
 import jatx.musiccommons.mp3.Frame;
 import jatx.musiccommons.mp3.Frame.WrongFrameException;
 
@@ -33,6 +35,7 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 	private Decoder mDecoder = null;
 	private Bitstream mBitStream = null;
 	private int mPosition = 0;
+	private File mCurrentFile = null;
 	
 	private float msFrame = 0f;
 	
@@ -52,16 +55,24 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 		if (f==null||!f.exists()) {
 			throw new Mp3DecoderException("File Read Error");
 		}
-		
+
+        mCurrentFile = f;
+
+		//Log.e("setFile", "1");
+
 		try {
 			AudioFile af;
 			af = AudioFileIO.read(f);
 
 			trackLengthSec = af.getAudioHeader().getTrackLength();
+
+			//Log.e("trackLengthSec", Integer.toString(trackLengthSec));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
+        //Log.e("setFile", "2");
+
 		mDecoder = new Decoder();
 		
 		if (mBitStream!=null) {
@@ -72,14 +83,18 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 			}
 			mBitStream = null;
 		}
-	
+
+        //Log.e("setFile", "3");
+
 		try {
 			InputStream inputStream = new BufferedInputStream(new FileInputStream(f), 32 * 1024);
 			mBitStream = new Bitstream(inputStream);
 		} catch (FileNotFoundException e) {
 			throw new Mp3DecoderException(e);
 		}
-		
+
+        //Log.e("setFile", "4");
+
 		currentMs = 0;
 		
 		resetTimeFlag = true;
@@ -94,10 +109,12 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 			if (mBitStream!=null) {
 				frameHeader = mBitStream.readFrame();
 			} else {
+			    //Log.e("readFrame", "mBitStream==null");
 				throw new Mp3DecoderException("bitstream: null");
 			}
 				
 			if (frameHeader==null) {
+			    //Log.e("readFrame", "frameHeader==null");
 				throw new TrackFinishException();
 			}
 			
@@ -105,9 +122,16 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 			msRead += msFrame;
 			msTotal += msFrame;
 			currentMs += msFrame;
-				
-			SampleBuffer output = (SampleBuffer) mDecoder.decodeFrame(frameHeader, mBitStream);
-			
+
+			SampleBuffer output;
+			try {
+				output = (SampleBuffer) mDecoder.decodeFrame(frameHeader, mBitStream);
+			} catch (ArrayIndexOutOfBoundsException e) {
+			    //Log.e("readFrame", "ArrayIndexOutOfBounds");
+			    mBitStream.closeFrame();
+				throw new TrackFinishException();
+			}
+
 			f = Frame.fromSampleBuffer(output, mPosition);
 				
 			mBitStream.closeFrame();
@@ -121,5 +145,39 @@ public class JLayerMp3Decoder extends Mp3Decoder {
 		
 		return f;
 	}
+
+    @Override
+    public void seek(double progress) throws Mp3DecoderException {
+        setFile(mCurrentFile);
+
+        long t0 = System.currentTimeMillis();
+
+        try {
+            while (currentMs<trackLengthSec*1000.0*progress) {
+                Header frameHeader = null;
+                if (mBitStream != null) {
+                	frameHeader = mBitStream.readFrame();
+                } else {
+                    throw new Mp3DecoderException("bitstream: null");
+                }
+
+                msFrame = frameHeader.ms_per_frame();
+                msRead += msFrame;
+                //msTotal += msFrame;
+				currentMs += msFrame;
+				mBitStream.closeFrame();
+            }
+        } catch (BitstreamException e) {
+            throw new Mp3DecoderException(e);
+        }
+
+        long t1 = System.currentTimeMillis();
+
+        Log.e("dt", Long.toString(t1-t0));
+
+        //msTotal += (t1-t0);
+
+        resetTimeFlag = true;
+    }
 }
 
