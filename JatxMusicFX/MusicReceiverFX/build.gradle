@@ -1,0 +1,27 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+mainClassName = 'jatx.musicreceiver.fx.Main'
+
+compileJava {
+    targetCompatibility = '1.8'
+    sourceCompatibility = '1.8'
+}
+
+dependencies {
+    compile "org.openjfx:javafx-base:13:win"
+    compile "org.openjfx:javafx-graphics:13:win"
+    compile "org.openjfx:javafx-controls:13:win"
+    compile "org.openjfx:javafx-fxml:13:win"
+
+    compile 'javazoom:jlayer:1.0.1'
+
+    compile project(':MusicCommons')
+}
+
+shadowJar {
+    destinationDir = file("J:\\Idea\\JatxMusicFX\\out")
+}

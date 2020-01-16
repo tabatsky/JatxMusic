@@ -29,21 +29,6 @@
 	    	</group>
 	    </menu>
     </item>
-
-	<!--
-    <item 
-        android:id="@+id/item_menu_playlist"
-        android:title="@string/string_playlist"
-        android:visible="true" 
-        yourapp:showAsAction="always|withText">
-        <menu>
-        	<group>
-	    		<item android:id="@+id/item_menu_export_m3u8" android:title="@string/string_export_m3u8"></item>
-	    		<item android:id="@+id/item_menu_import_m3u8" android:title="@string/string_import_m3u8"></item>
-	    	</group>
-	    </menu>
-    </item>
-    -->
     
     <item
         android:id="@+id/action_help"
@@ -60,8 +45,7 @@
 						<item android:id="@+id/item_receiver_android" android:title="@string/item_receiver_android"></item>
 					</menu>
 				</item>
-        	    <!-- <item android:id="@+id/item_javafx_version" android:title="@string/item_javafx_version"></item> -->
-        	    <item android:id="@+id/item_receiver_javafx" android:title="@string/item_receiver_javafx"></item> 
+        	    <item android:id="@+id/item_receiver_javafx" android:title="@string/item_receiver_javafx"></item>
         	    <item android:id="@+id/item_transmitter_javafx" android:title="@string/item_transmitter_javafx"></item>
         	    <item android:id="@+id/item_source_code" android:title="@string/item_source_code"></item>
         	    <item android:id="@+id/item_dev_site" android:title="@string/item_dev_site"></item>
