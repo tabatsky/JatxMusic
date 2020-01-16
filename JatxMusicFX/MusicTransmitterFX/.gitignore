@@ -1,0 +1,9 @@
+*.iml
+.gradle
+.settings
+.idea
+bin
+build
+current.m3u
+musicinfo.db
+settings.txt
