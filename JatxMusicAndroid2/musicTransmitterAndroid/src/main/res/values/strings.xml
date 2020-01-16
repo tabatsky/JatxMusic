@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">JatxMusic Transmitter</string>
+	<string name="title_tag_editor">Tag Editor</string>
+    
+    <string name="string_add">Add</string>
+    <string name="string_add_track">Add Track</string>
+    <string name="string_add_folder">Add Folder</string>
+	<string name="string_add_mic">Add Microphone</string>
+	<string name="string_remove">Remove</string>
+	<string name="string_remove_track">Remove Track</string>
+	<string name="string_remove_all">Remove All</string>
+	<string name="string_playlist">Playlist</string>
+	<string name="string_export_m3u8">Export M3U8</string>
+	<string name="string_import_m3u8">Import M3U8</string>
+	
+	<string name="question_remove_track">Remove This Track?</string>
+	<string name="question_remove_all">Remove All Tracks?</string>
+	
+	<string name="dialog_track_title">Choose Action</string>
+	<string name="button_remove_this_track">Remove This Track</string>
+	<string name="button_open_tag_editor">Open Tag Editor</string>
+	<string name="button_cancel">Cancel</string>
+	
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+	
+	<string name="toast_m3u8_ext">Playlist file must have m3u8 extension</string>
+	<string name="toast_long_tap">Make long tap on track to remove</string>
+	<string name="toast_no_mic_access">No microphone access</string>
+	<string name="toast_cannot_init_microphone">Cannot init microphone</string>
+	
+	<string name="editor_file">File:</string>
+	<string name="editor_title">Title:</string>
+	<string name="editor_album">Album:</string>
+	<string name="editor_artist">Artist:</string>
+	<string name="editor_number">Number:</string>
+	<string name="editor_year">Year:</string>
+	<string name="editor_save">Save</string>
+	
+	<string name="item_review_app">Review App</string>
+	<string name="item_show_manual">Show manual</string>
+	<string name="item_show_my_ip">Find my IP</string>
+	<string name="item_other_apps">Other apps</string>
+	<string name="item_receiver_android">Receiver for Android</string>
+	<string name="item_javafx_version">Version for JavaFX</string>
+	<string name="item_receiver_javafx">Receiver for JavaFX</string>
+	<string name="item_transmitter_javafx">Transmitter for JavaFX</string>
+	<string name="item_source_code">Source Code</string>
+	<string name="item_dev_site">Developer Site</string>
+
+	<string name="button_ok">Ok</string>
+	<string name="button_dont_shore_anymore">Do not show any more</string>
+
+	<string name="manual_title">Manual</string>
+	<string name="manual_message">
+		In connection with mass misunderstanding of users, publish this manual.\n\n
+		The application is designed to transfer music from one device to another within the same Wi-Fi network.\n\n
+		The application is NOT INTENDED for broadcasting music on FM!\n\n
+		For the correct operation of the application:\n\n
+		1. Install the receiver application on the second device -
+		Menu items \"Receiver for Android\" or \"Receiver for JavaFX\".\n\n
+		2. Find out your Wi-Fi IP address in the \"Find My IP\" menu.\n\n
+		3. Enter the IP address in the destination application.\n\n
+		4. Click in the Receiver \"Start\" or \"Auto Connect\".\n\n
+		5. The Wi-Fi icon to the left of the player control buttons should change the color from gray to black - this means the application is ready for use.
+	</string>
+
+	<string name="show_ip_title">Your IP</string>
+	<string name="not_detected_message">Not detected\nMay be Wi-Fi is down</string>
+
+	<string name="really_quit">Are you really want to quit app?</string>
+
+	<string name="need_you_help">Need Your Help</string>
+	<string name="do_you_like_this_app">
+		Do you like this application, and do you want it to continue developing?
+        \nYou can help in its promotion by putting an estimate or writing a review.
+	</string>
+</resources>

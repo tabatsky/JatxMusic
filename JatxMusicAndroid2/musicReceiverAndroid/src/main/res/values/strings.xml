@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">JatxMusic Receiver</string>
+    
+    <string name="string_ok">Ok</string>
+    <string name="string_exit">Exit</string>
+    <string name="string_start">Start</string>
+    <string name="string_stop">Stop</string>
+    <string name="string_auto_connect">Auto Connect</string>
+    <string name="string_input_host">Hostname or IP-address of Transmitter</string>
+    <string name="string_use_bluetooth">Use bluetooth headset</string>
+
+    <string name="toast_disconnect">Disconnect Occured</string>
+    <string name="toast_empty_host">Hostname cannot be empty</string>
+    <string name="toast_bluetooth_error">Fail. Check that bluetooth is on and the headset is set up</string>
+    
+    <string name="item_review_app">Review App</string>
+    <string name="item_other_apps">Other apps</string>
+	<string name="item_transmitter_android">Transmitter for Android</string>
+	<string name="item_javafx_version">Version for JavaFX</string>
+	<string name="item_receiver_javafx">Receiver for JavaFX</string>
+	<string name="item_transmitter_javafx">Transmitter for JavaFX</string>
+	<string name="item_source_code">Source Code</string>
+	<string name="item_dev_site">Developer Site</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="really_quit">Are you really want to quit app?</string>
+
+    <string name="need_you_help">Need Your Help</string>
+    <string name="do_you_like_this_app">
+		Do you like this application, and do you want it to continue developing?
+        \nYou can help in its promotion by putting an estimate or writing a review.
+	</string>
+</resources>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/text_title"
+        android:text="title"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/text_artist"
+        android:text="artist"
+        android:textStyle="italic"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        >
+        <!--
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/grayC"
+            />
+            -->
+
+        <ImageButton
+            android:id="@+id/rev"
+            android:layout_width="@dimen/button_size_big"
+            android:layout_height="@dimen/button_size_big"
+            android:padding="@dimen/button_padding"
+            android:src="@drawable/ic_rev"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            android:layout_toLeftOf="@id/play"
+            />
+
+        <ImageButton
+            android:id="@+id/play"
+            android:layout_width="@dimen/button_size_big"
+            android:layout_height="@dimen/button_size_big"
+            android:padding="@dimen/button_padding"
+            android:src="@drawable/ic_play"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            android:layout_toLeftOf="@id/pause"
+            />
+
+        <ImageButton
+            android:id="@+id/pause"
+            android:layout_width="@dimen/button_size_big"
+            android:layout_height="@dimen/button_size_big"
+            android:padding="@dimen/button_padding"
+            android:src="@drawable/ic_pause"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            android:background="@android:color/transparent"
+            android:layout_toLeftOf="@id/fwd"
+            />
+
+        <ImageButton
+            android:id="@+id/fwd"
+            android:layout_width="@dimen/button_size_big"
+            android:layout_height="@dimen/button_size_big"
+            android:padding="@dimen/button_padding"
+            android:src="@drawable/ic_fwd"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"
+            />
+
+        <!--
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/grayC"
+            />
+            -->
+
+        <!--
+        <ImageButton
+            android:id="@+id/vol_down"
+            android:layout_width="@dimen/button_size_big"
+            android:layout_height="@dimen/button_size_big"
+            android:padding="@dimen/button_padding"
+            android:src="@drawable/ic_down"
+            android:scaleType="fitXY"
+            android:background="@color/grayE"
+            android:layout_toLeftOf="@id/vol_label"
+            />
+
+        <TextView
+            android:id="@+id/vol_label"
+            android:layout_width="@dimen/volume_label_width"
+            android:layout_height="@dimen/button_size_big"
+            android:padding="@dimen/button_padding"
+            android:textSize="@dimen/volume_label_text"
+            android:gravity="center"
+            android:text="100%"
+            android:background="@color/grayE"
+            android:textColor="@color/black"
+            android:layout_toLeftOf="@id/vol_up"
+            />
+
+        <ImageButton
+            android:id="@+id/vol_up"
+            android:layout_width="@dimen/button_size_big"
+            android:layout_height="@dimen/button_size_big"
+            android:padding="@dimen/button_padding"
+            android:src="@drawable/ic_up"
+            android:scaleType="fitXY"
+            android:background="@color/grayE"
+            android:layout_alignParentRight="true"
+            />
+
+        -->
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </RelativeLayout>
+</LinearLayout>
