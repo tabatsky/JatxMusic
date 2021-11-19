@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MusicTransmitterFX:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MusicTransmitterFX_jar</output-path>
+    <root id="archive" name="MusicTransmitterFX.jar">
+      <element id="module-output" name="MusicTransmitterFX" />
+      <element id="module-output" name="MusicCommons" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/MusicCommons/lib/jl1.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/MusicCommons/lib/jaudiotagger-2.0.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/MusicTransmitterFX/lib/sqlite-jdbc-3.8.7.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

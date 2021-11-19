@@ -1,0 +1,3 @@
+CURRENT_MUSIC_DIR=C:\Users\User\Music\music\Немного Нервно\Необитаемый - 2015
+CURRENT_LIST_DIR=C:\Users\User\Music
+VOLUME=65
