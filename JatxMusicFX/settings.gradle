@@ -1,0 +1,2 @@
+include ':MusicCommons', ':MusicTransmitterFX', ':MusicReceiverFX'
+rootProject.name = 'JatxMusicFX'

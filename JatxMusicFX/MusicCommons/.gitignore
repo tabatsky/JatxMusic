@@ -1,4 +1,6 @@
 *.iml
 .gradle
+.settings
 .idea
-out
+bin
+build

@@ -10,46 +10,97 @@
     <ignored path="$PROJECT_DIR$/MusicCommons/bin/" />
     <ignored path="$PROJECT_DIR$/MusicReceiverFX/bin/" />
     <ignored path="$PROJECT_DIR$/MusicTransmitterFX/bin/" />
+    <ignored path="$PROJECT_DIR$/.gradle/" />
+    <ignored path="$PROJECT_DIR$/build/" />
+    <ignored path="$PROJECT_DIR$/MusicCommons/.gradle/" />
+    <ignored path="$PROJECT_DIR$/MusicCommons/build/" />
+    <ignored path="$PROJECT_DIR$/MusicCommons/out/" />
+    <ignored path="$PROJECT_DIR$/MusicReceiverFX/.gradle/" />
+    <ignored path="$PROJECT_DIR$/MusicReceiverFX/build/" />
+    <ignored path="$PROJECT_DIR$/MusicReceiverFX/out/" />
+    <ignored path="$PROJECT_DIR$/MusicTransmitterFX/.gradle/" />
+    <ignored path="$PROJECT_DIR$/MusicTransmitterFX/build/" />
+    <ignored path="$PROJECT_DIR$/MusicTransmitterFX/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="JatxMusicFX" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/UI.java">
+        <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/Microphone.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="25" selection-start-line="25" selection-end-line="25" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/TransmitterPlayer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="21" column="29" selection-start-line="21" selection-start-column="29" selection-end-line="21" selection-end-column="29" />
+            <state relative-caret-position="918">
+              <caret line="60" column="27" selection-start-line="60" selection-start-column="27" selection-end-line="60" selection-end-column="27" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/jatx/musictransmitter/fx/Main.java">
+        <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="328">
-              <caret line="200" column="12" selection-start-line="200" selection-start-column="12" selection-end-line="200" selection-end-column="12" />
+            <state relative-caret-position="323">
+              <caret line="19" column="45" selection-start-line="19" selection-start-column="45" selection-end-line="19" selection-end-column="45" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/css/main.css">
+        <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/TrackInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+            <state relative-caret-position="2363">
+              <caret line="173" column="9" selection-start-line="173" selection-start-column="9" selection-end-line="173" selection-end-column="9" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/java/jatx/musictransmitter/fx/MainFX.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6426">
+              <caret line="422" column="29" selection-start-line="422" selection-start-column="29" selection-end-line="422" selection-end-column="29" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/Loopback.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -71,23 +122,59 @@
       <find>microphoneOk</find>
       <find>mic</find>
       <find>mic_path</find>
+      <find>menuAc</find>
+      <find>doubl</find>
+      <find>mFileList.add</find>
+      <find>loa</find>
     </findStrings>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/util/Frame.java" />
-        <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/Microphone.java" />
-        <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/TrackInfo.java" />
         <option value="$PROJECT_DIR$/MusicTransmitterFX/src/css/main.css" />
         <option value="$PROJECT_DIR$/MusicTransmitterFX/src/fxml/main.fxml" />
         <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/UI.java" />
         <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/Mp3Decoder.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/TrackInfo.java" />
         <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/JLayerMp3Decoder.java" />
         <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/TransmitterPlayer.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/Microphone.java" />
+        <option value="$PROJECT_DIR$/gradle.properties" />
+        <option value="$PROJECT_DIR$/settings.gradle" />
         <option value="$PROJECT_DIR$/MusicTransmitterFX/src/jatx/musictransmitter/fx/Main.java" />
+        <option value="$PROJECT_DIR$/MusicTransmitterFX/MANIFEST.MF" />
+        <option value="$PROJECT_DIR$/MusicTransmitterFX/src/module-info.java" />
+        <option value="$PROJECT_DIR$/MusicTransmitterFX/src/main/java/module-info.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/module-info.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/Microphone.java" />
+        <option value="$PROJECT_DIR$/MusicTransmitterFX/src/main/java/jatx/musictransmitter/fx/Main.java" />
+        <option value="$PROJECT_DIR$/MusicReceiverFX/src/jatx/musicreceiver/fx/Main.java" />
+        <option value="$PROJECT_DIR$/MusicReceiverFX/src/main/java/jatx/musicreceiver/fx/Main.java" />
+        <option value="$PROJECT_DIR$/MusicReceiverFX/src/main/java/jatx/musicreceiver/fx/MainFX.java" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/wav/ReadExample.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/wav/WavFileException.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/wav/WriteExample.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/wav/WavFile.java" />
+        <option value="$PROJECT_DIR$/MusicReceiverFX/build.gradle" />
+        <option value="$PROJECT_DIR$/MusicTransmitterFX/src/main/resources/fxml/main.fxml" />
+        <option value="$PROJECT_DIR$/MusicTransmitterFX/build.gradle" />
+        <option value="$PROJECT_DIR$/MusicCommons/build.gradle" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/TrackInfo.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/TransmitterPlayer.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/Loobback.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/util/Frame.java" />
+        <option value="$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/Loopback.java" />
+        <option value="$PROJECT_DIR$/MusicTransmitterFX/src/main/java/jatx/musictransmitter/fx/MainFX.java" />
       </list>
     </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand />
+      <select />
+    </treeState>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="27" />
@@ -99,52 +186,169 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MusicReceiverFX" type="462c0819:PsiDirectoryNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
               <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MusicReceiverFX" type="462c0819:PsiDirectoryNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicCommons" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicCommons" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MusicReceiverFX" type="462c0819:PsiDirectoryNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicCommons" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicCommons" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicCommons" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="musiccommons" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicCommons" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="musiccommons" type="462c0819:PsiDirectoryNode" />
+              <item name="transmitter" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicCommons" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="musiccommons" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicCommons" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="musiccommons" type="462c0819:PsiDirectoryNode" />
+              <item name="wav" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicReceiverFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="fx" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MusicTransmitterFX" type="462c0819:PsiDirectoryNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MusicTransmitterFX" type="462c0819:PsiDirectoryNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MusicTransmitterFX" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="css" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MusicTransmitterFX" type="462c0819:PsiDirectoryNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
               <item name="fxml" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="JatxMusicFX" type="b2602c69:ProjectViewProjectNode" />
-              <item name="MusicTransmitterFX" type="462c0819:PsiDirectoryNode" />
+              <item name="JatxMusicFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="MusicTransmitterFX" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="fx" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="icons" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="JatxMusicFX" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="jatx" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="JatxMusicFX" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="jatx" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="MusicTransmitterFX" type="2674bda8:ScopeViewTreeModel$GroupNode" />
             </path>
           </expand>
           <select />
@@ -155,11 +359,26 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1554692736321" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../personal" />
-    <property name="project.structure.last.edited" value="Artifacts" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1619664756796" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="J:\Idea\JatxMusicFX\MusicReceiverFX\src\main\resources" />
+      <recent name="J:\Idea\JatxMusicFX\MusicReceiverFX\src\main\java" />
+      <recent name="J:\Idea\JatxMusicFX\MusicTransmitterFX\src\main\resources" />
+      <recent name="J:\Idea\JatxMusicFX\MusicTransmitterFX\src\main" />
+      <recent name="J:\Idea\JatxMusicFX\MusicTransmitterFX\src\main\java" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="J:\Idea\JatxMusicFX\gradle\wrapper" />
+      <recent name="J:\Idea\JatxMusicFX\gradle" />
+      <recent name="J:\Idea\JatxMusicFX" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -173,7 +392,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.transmitter">
+  <component name="RunManager" selected="Gradle.JatxMusicFX [shadowJar]">
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
       <module name="" />
       <option name="TESTING_TYPE" value="0" />
@@ -207,24 +426,21 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Transmitter" type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="jatx.musictransmitter.fx.Main" />
+      <module name="JatxMusicFX.MusicTransmitterFX.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="jatx.musictransmitter.fx.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="receiver" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="jatx.musicreceiver.fx.Main" />
-      <module name="MusicReceiverFX" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="transmitter" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="jatx.musictransmitter.fx.Main" />
-      <module name="MusicTransmitterFX" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -310,6 +526,44 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="JatxMusicFX [compileJava]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="compileJava" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="JatxMusicFX [shadowJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="shadowJar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="GrailsRunConfigurationType" factoryName="Grails">
       <setting name="vmparams" value="" />
       <setting name="cmdLine" value="run-app" />
@@ -387,9 +641,17 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Application.transmitter" />
-      <item itemvalue="Application.receiver" />
+      <item itemvalue="Application.Transmitter" />
+      <item itemvalue="Gradle.JatxMusicFX [compileJava]" />
+      <item itemvalue="Gradle.JatxMusicFX [shadowJar]" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.JatxMusicFX [shadowJar]" />
+        <item itemvalue="Gradle.JatxMusicFX [compileJava]" />
+        <item itemvalue="Application.Transmitter" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -423,16 +685,45 @@
       <workItem from="1554607791207" duration="659000" />
       <workItem from="1554692103739" duration="957000" />
       <workItem from="1556849927981" duration="614000" />
+      <workItem from="1567395179351" duration="926000" />
+      <workItem from="1575068792176" duration="4987000" />
+      <workItem from="1576125812062" duration="598000" />
+      <workItem from="1576219830036" duration="594000" />
+      <workItem from="1576540781821" duration="598000" />
+      <workItem from="1576982030839" duration="106000" />
+      <workItem from="1578649504613" duration="2786000" />
+      <workItem from="1578652403899" duration="311000" />
+      <workItem from="1578652770397" duration="718000" />
+      <workItem from="1578653585468" duration="4262000" />
+      <workItem from="1578698395034" duration="10277000" />
+      <workItem from="1578786877367" duration="3877000" />
+      <workItem from="1578810400214" duration="143000" />
+      <workItem from="1579055573830" duration="575000" />
+      <workItem from="1579220186241" duration="331000" />
+      <workItem from="1579223956065" duration="949000" />
+      <workItem from="1579306615202" duration="33000" />
+      <workItem from="1579306692207" duration="4849000" />
+      <workItem from="1579390535985" duration="209000" />
+      <workItem from="1581471419931" duration="54000" />
+      <workItem from="1582087119488" duration="599000" />
+      <workItem from="1582164227006" duration="107000" />
+      <workItem from="1582602313357" duration="1456000" />
+      <workItem from="1597801482291" duration="2928000" />
+      <workItem from="1619570061507" duration="9418000" />
+      <workItem from="1619580096339" duration="1400000" />
+      <workItem from="1619663905227" duration="1345000" />
+      <workItem from="1621304022998" duration="382000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38714000" />
+    <option name="totallyTimeSpent" value="93532000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26928896" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.41452345" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -440,20 +731,22 @@
       <window_info id="Favorites" order="5" side_tool="true" />
       <window_info id="Capture Tool" order="6" />
       <window_info id="Nl-Palette" order="7" />
+      <window_info id="Build Variants" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32405892" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4969743" weight="0.32405892" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39872408" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="9" weight="0.32730263" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.48335856" weight="0.3289689" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5030257" side_tool="true" weight="0.32405892" />
+      <window_info anchor="bottom" id="Messages" order="9" sideWeight="0.4977307" weight="0.32569557" />
       <window_info anchor="bottom" id="Version Control" order="10" show_stripe_button="false" />
       <window_info anchor="bottom" id="TimeTrackerPlugin" order="11" />
       <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="13" />
+      <window_info anchor="bottom" id="Build" order="14" sideWeight="0.4969743" weight="0.3289689" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -464,7 +757,8 @@
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Theme Preview" order="8" />
       <window_info anchor="right" id="Properties" order="9" />
-      <window_info anchor="right" id="Maven" order="10" />
+      <window_info anchor="right" id="Gradle" order="10" weight="0.32980332" />
+      <window_info anchor="right" id="Maven" order="11" weight="0.32980332" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -475,71 +769,28 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/receiver/SoundOut.java">
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/receiver/SoundOut.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="12" column="17" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/src/jatx/musicreceiver/fx/DesktopSoundOut.java">
+    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/src/main/java/jatx/musicreceiver/fx/DesktopSoundOut.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-240">
           <caret line="21" column="13" selection-start-line="21" selection-start-column="13" selection-end-line="21" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/Microphone.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="39" column="4" selection-start-line="39" selection-start-column="4" selection-end-line="43" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/util/Frame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2325">
-          <caret line="169" column="4" selection-start-line="169" selection-start-column="4" selection-end-line="181" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/icons/ic_shuffle.png">
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/resources/icons/ic_shuffle.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/icons/ic_repeat.png">
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/resources/icons/ic_repeat.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/icons/ic_play.png">
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/resources/icons/ic_play.png">
       <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/TrackInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3450">
-          <caret line="254" column="8" selection-start-line="254" selection-start-column="8" selection-end-line="254" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/fxml/main.fxml">
-      <provider editor-type-id="JavaFX-Scene-Builder" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" column="8" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/JLayerMp3Decoder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="137" column="13" lean-forward="true" selection-start-line="137" selection-start-column="13" selection-end-line="137" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/Mp3Decoder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/settings.txt">
       <provider selected="true" editor-type-id="text-editor" />
@@ -547,44 +798,251 @@
     <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/.project">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/src/jatx/musicreceiver/fx/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="39" column="34" lean-forward="true" selection-start-line="39" selection-start-column="34" selection-end-line="39" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MusicReceiverFX/MusicReceiverFX.iml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/MusicTransmitterFX.iml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/UI.java">
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/UI.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="25" selection-start-line="25" selection-end-line="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicCommons/src/jatx/musiccommons/transmitter/TransmitterPlayer.java">
+    <entry file="file://$PROJECT_DIR$/MusicCommons/MusicCommons.iml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/.project">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/build.fxbuild">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/MANIFEST.MF" />
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/java/module-info.java" />
+    <entry file="jar://$PROJECT_DIR$/MusicCommons/lib/jl1.0.1.jar!/META-INF/MANIFEST.MF" />
+    <entry file="jar://$PROJECT_DIR$/MusicCommons/lib/jaudiotagger-2.0.3.jar!/META-INF/MANIFEST.MF" />
+    <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradle.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="21" column="29" selection-start-line="21" selection-start-column="29" selection-end-line="21" selection-end-column="29" />
+        <state>
+          <caret column="65" selection-start-column="65" selection-end-column="65" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/css/main.css">
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/module-info.java" />
+    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/src/jatx/musicreceiver/fx/Main.java" />
+    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/src/main/java/jatx/musicreceiver/fx/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="24" selection-start-line="4" selection-start-column="24" selection-end-line="4" selection-end-column="24" />
+          <folding>
+            <element signature="e#95#96#0" expanded="true" />
+            <element signature="e#116#117#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/src/main/resources/css/main.css">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/src/main/resources/fxml/main.fxml">
+      <provider editor-type-id="JavaFX-Scene-Builder" />
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.openjfx/javafx-graphics/13/d407d8267c270f775482a3e05fef7d857b824b47/javafx-graphics-13-sources.jar!/javafx/application/Application.java" />
+    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/src/main/java/jatx/musicreceiver/fx/MainFX.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="988">
+          <caret line="127" column="13" selection-start-line="127" selection-start-column="13" selection-end-line="127" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/resources/css/main.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
           <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/jatx/musictransmitter/fx/Main.java">
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/wav/WriteExample.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="200" column="12" selection-start-line="200" selection-start-column="12" selection-end-line="200" selection-end-column="12" />
+        <state relative-caret-position="-425">
+          <caret line="6" column="14" selection-start-line="6" selection-start-column="14" selection-end-line="6" selection-end-column="14" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/wav/WavFileException.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/java/jatx/musictransmitter/fx/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+          <folding>
+            <element signature="e#98#99#0" expanded="true" />
+            <element signature="e#131#132#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/JLayerMp3Decoder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="48" column="38" selection-start-line="48" selection-start-column="38" selection-end-line="48" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/wav/ReadExample.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/wav/WavFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/util/FolderUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="16" column="13" selection-start-line="16" selection-start-column="13" selection-end-line="16" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicReceiverFX/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="19" column="35" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-111">
+          <caret selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="35" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://J:/.gradle/caches/modules-2/files-2.1/com.github.sjoerdvankreel/xt.audio/1.9/b92e777b43fdb0ba64c7ff741f560d6894861618/xt.audio-1.9-sources.jar!/xt/audio/XtDevice.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="42" selection-start-line="42" selection-end-line="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/Mp3Decoder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-221">
+          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://J:/.gradle/caches/modules-2/files-2.1/com.github.sjoerdvankreel/xt.audio/1.9/b92e777b43fdb0ba64c7ff741f560d6894861618/xt.audio-1.9-sources.jar!/xt/audio/Utility.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="79" selection-start-line="79" selection-end-line="79" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://J:/.gradle/caches/modules-2/files-2.1/com.github.sjoerdvankreel/xt.audio/1.9/b92e777b43fdb0ba64c7ff741f560d6894861618/xt.audio-1.9-sources.jar!/xt/audio/XtStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/util/Frame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2958">
+          <caret line="189" column="36" selection-start-line="189" selection-start-column="36" selection-end-line="189" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/resources/fxml/main.fxml">
+      <provider editor-type-id="JavaFX-Scene-Builder" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="66" selection-start-line="20" selection-start-column="66" selection-end-line="20" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/TransmitterPlayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="526">
+          <caret line="320" column="40" selection-start-line="320" selection-start-column="40" selection-end-line="320" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/Microphone.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="918">
+          <caret line="60" column="27" selection-start-line="60" selection-start-column="27" selection-end-line="60" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/TrackInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2363">
+          <caret line="173" column="9" selection-start-line="173" selection-start-column="9" selection-end-line="173" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/src/main/java/jatx/musictransmitter/fx/MainFX.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6426">
+          <caret line="422" column="29" selection-start-line="422" selection-start-column="29" selection-end-line="422" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicCommons/src/main/java/jatx/musiccommons/transmitter/Loopback.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MusicTransmitterFX/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="19" column="45" selection-start-line="19" selection-start-column="45" selection-end-line="19" selection-end-column="45" />
         </state>
       </provider>
     </entry>
@@ -607,7 +1065,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>No facets are configured</last-edited>
+          <last-edited>Detection</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -630,7 +1088,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>1.8</last-edited>
+          <last-edited>13</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -642,12 +1100,11 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>MusicTransmitterFX</last-edited>
+          <last-edited>Java-Gradle|MusicCommons</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
