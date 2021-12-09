@@ -99,7 +99,7 @@ public class TransmitterPlayer extends Thread {
 			}
 		}
 	}
-	
+
 	public void pause() {
 		System.out.println("(player) pause");
 		isPlaying = false;

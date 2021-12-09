@@ -1,12 +1,16 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = file("keystore.properties");
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     signingConfigs {
         config {
-            keyAlias 'key'
-            keyPassword ''
-            storeFile file('J:\\Studio\\JatxMusicAndroid\\receiver.keystore')
-            storePassword ''
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
         }
     }
     compileSdkVersion 28
