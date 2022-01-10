@@ -1,5 +1,6 @@
-*/bin/
-*/gen/
-*/*/bin/
-*/*/build/
-*/keystore
+bin
+gen
+bin
+build
+keystore.properties
+.idea
