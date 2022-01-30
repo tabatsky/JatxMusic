@@ -23,5 +23,5 @@ dependencies {
 }
 
 shadowJar {
-    destinationDir = file("J:\\Idea\\JatxMusicFX\\out")
+    destinationDir = file("${project.rootProject.projectDir}\\out")
 }

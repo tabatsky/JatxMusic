@@ -20,7 +20,7 @@ import javazoom.jl.decoder.SampleBuffer;
 
 public class Frame {
 	public static final int FRAME_HEADER_SIZE = 64;
-	public static final int[] FRAME_RATES = {32000, 44100, 48000};
+	public static final int[] FRAME_RATES = {32000, 44100, 48000, 96000, 192000};
 	
 	public int size;
 	public int freq;
