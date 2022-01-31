@@ -29,10 +29,6 @@ public class TransmitterPlayer extends Thread {
 	
 	public static final int CONNECT_PORT_PLAYER = 7171;
 	
-	public static final int FRAME_HEADER_SIZE = 32;
-	
-	public static final int[] FRAME_RATES = {32000, 44100, 48000};
-	
 	volatile WeakReference<UI> ref;
 	
 	volatile int mCount;
@@ -48,22 +44,19 @@ public class TransmitterPlayer extends Thread {
 	volatile boolean loopbackOk;
 
 	volatile String mPath;
-	volatile Mp3Decoder mDecoder;
 	
 	volatile long t1;
 	volatile long t2;
 	volatile float dt;
 
-	public TransmitterPlayer(List<File> fileList, UI ui, Mp3Decoder decoder) {
-		ref = new WeakReference<UI>(ui);
+	public TransmitterPlayer(List<File> fileList, UI ui, MusicDecoder decoder) {
+		ref = new WeakReference(ui);
 		setFileList(fileList);
 		
 		isPlaying = false;
 		mForceDisconnectFlag = false;
 		
 		mPath = "";
-		mDecoder = decoder;
-
 	}
 
 	public void setFileList(List<File> fileList) {
@@ -115,8 +108,11 @@ public class TransmitterPlayer extends Thread {
 	    boolean needToPlay = isPlaying;
 	    pause();
 	    try {
-            mDecoder.seek(progress);
-        } catch (Mp3Decoder.Mp3DecoderException e) {
+			MusicDecoder musicDecoder = MusicDecoder.getInstance();
+			if (musicDecoder != null) {
+				musicDecoder.seek(progress);
+			}
+        } catch (MusicDecoder.MusicDecoderException e) {
 	        e.printStackTrace();
         }
         if (needToPlay) play();
@@ -156,10 +152,9 @@ public class TransmitterPlayer extends Thread {
 		}
 
         try {
-            mDecoder.setPath(mPath);
-            mDecoder.setPosition(mPosition);
-            //mDecoder.resetTimeFlag = true;
-        } catch (Mp3Decoder.Mp3DecoderException e) {
+			MusicDecoder.setPath(mPath);
+			MusicDecoder.setPosition(mPosition);
+        } catch (MusicDecoder.MusicDecoderException e) {
             System.err.println("(player) " + e.getMessage());
         }
 
@@ -209,13 +204,13 @@ public class TransmitterPlayer extends Thread {
 					System.err.println("(player) socket timeout");
 					
 					mForceDisconnectFlag = false;
-					mDecoder.disconnectResetTimeFlag = true;
+					MusicDecoder.disconnectResetTimeFlag = true;
 				} catch (DisconnectException e){
 					System.err.println("(player) socket force disconnect");
 					System.err.println("(player) " + (new Date()).getTime()%10000);
 					
 					mForceDisconnectFlag = false;
-					mDecoder.disconnectResetTimeFlag = true;
+					MusicDecoder.disconnectResetTimeFlag = true;
 				} catch (IOException e) {
 					System.err.println("(player) socket disconnect");
 					System.err.println("(player) " + (new Date()).getTime()%10000);
@@ -225,7 +220,7 @@ public class TransmitterPlayer extends Thread {
 					Thread.sleep(250);
 					
 					mForceDisconnectFlag = false;
-					mDecoder.disconnectResetTimeFlag = true;
+					MusicDecoder.disconnectResetTimeFlag = true;
 				} finally {
 					try {
 						os.close();
@@ -270,98 +265,103 @@ public class TransmitterPlayer extends Thread {
 	
 	private void translateMusic(OutputStream os) 
 			throws InterruptedException, IOException, DisconnectException {
-		byte[] data = null;
+		byte[] data;
 		
 		t1 = (new Date()).getTime();
 		t2 = t1;
 		dt = 0f;
 		
 		while (true) {
-			if (isPlaying) {
-				if (mDecoder.resetTimeFlag) {
-					long t2_1 = t2;
-					
+			MusicDecoder musicDecoder = MusicDecoder.getInstance();
+			if (musicDecoder != null) {
+				if (isPlaying) {
+					if (MusicDecoder.resetTimeFlag) {
+						long t2_1 = t2;
+
+						do {
+							t2 = (new Date()).getTime();
+
+							dt = musicDecoder.msTotal - (t2 - t1);
+
+							Thread.sleep(10);
+						} while (dt > 0);
+
+						musicDecoder.msRead = 0f;
+						musicDecoder.msTotal = 0f;
+						t1 = (new Date()).getTime();
+						t2 = t1;
+
+						long t2_2 = t2;
+
+						System.out.println("(player) force delay: " + (t2_2 - t2_1));
+
+						MusicDecoder.resetTimeFlag = false;
+					}
+
+					if (MusicDecoder.disconnectResetTimeFlag) {
+						t1 = (new Date()).getTime();
+						t2 = t1;
+						musicDecoder.msRead = 0f;
+						musicDecoder.msTotal = 0f;
+						MusicDecoder.disconnectResetTimeFlag = false;
+					}
+
+					try {
+						if (TrackInfo.isMicPath(mPath)) {
+							data = Microphone.readFrame(mPosition).toByteArray();
+						} else if (TrackInfo.isLoopbackPath(mPath)) {
+							data = Loopback.readFrame(mPosition).toByteArray();
+						} else {
+							data = musicDecoder.readFrame().toByteArray();
+						}
+
+					} catch (MusicDecoder.MusicDecoderException | Microphone.MicrophoneReadException e) {
+						data = null;
+						e.printStackTrace();
+						Thread.sleep(200);
+					} catch (Loopback.LoopbackReadException e) {
+						data = null;
+						System.out.println("(player) loopback read exception");
+						Thread.sleep(200);
+					} catch (MusicDecoder.TrackFinishException e) {
+						data = null;
+						System.out.println("(player) track finish");
+						nextTrack();
+					} catch (WrongFrameException e) {
+						data = null;
+						System.err.println("(player) wrong frame");
+						System.err.println("(player) " + e.getMessage());
+						nextTrack();
+					}
+
+					if (data != null) {
+						os.write(data);
+						os.flush();
+					}
+				} else {
+					Thread.sleep(10);
+					musicDecoder.msRead = 0f;
+					musicDecoder.msTotal = 0f;
+					t1 = (new Date()).getTime();
+					t2 = t1;
+					dt = 0f;
+				}
+
+				if (mForceDisconnectFlag) {
+					System.out.println("(player) disconnect flag: throwing DisconnectException");
+					throw new DisconnectException();
+				}
+
+				if (musicDecoder.msRead > 300) {
 					do {
 						t2 = (new Date()).getTime();
-						dt = mDecoder.msTotal - (t2-t1);
-						
+						dt = musicDecoder.msTotal - (t2 - t1);
+
 						Thread.sleep(10);
-					} while (dt>0);
-					
-					mDecoder.msRead = 0f;
-					mDecoder.msTotal = 0f;
-					t1 = (new Date()).getTime();
-					t2 = t1;
-					
-					long t2_2 = t2;
-					
-					System.out.println("(player) force delay: " + (t2_2-t2_1));
-					
-					mDecoder.resetTimeFlag = false;
+					} while (dt > 200);
+
+					musicDecoder.msRead = 0f;
 				}
-				
-				if (mDecoder.disconnectResetTimeFlag) {
-					t1 = (new Date()).getTime();
-					t2 = t1;
-					mDecoder.msRead = 0f;
-					mDecoder.msTotal = 0f;
-					mDecoder.disconnectResetTimeFlag = false;
-				}
-				
-				try {
-                    if (TrackInfo.isMicPath(mPath)) {
-						data = Microphone.readFrame(mPosition).toByteArray();
-					} else if (TrackInfo.isLoopbackPath(mPath)) {
-                    	data = Loopback.readFrame(mPosition).toByteArray();
-                    } else {
-                        data = mDecoder.readFrame().toByteArray();
-                    }
-				} catch (Mp3Decoder.Mp3DecoderException | Microphone.MicrophoneReadException e) {
-					data = null;
-					e.printStackTrace();
-					Thread.sleep(200);
-				} catch (Loopback.LoopbackReadException e) {
-					data = null;
-					System.out.println("(player) loopback read exception");
-					Thread.sleep(200);
-				} catch (Mp3Decoder.TrackFinishException e) {
-					data = null;
-					System.out.println("(player) track finish");
-					nextTrack();
-				} catch (WrongFrameException e) {
-					data = null;
-					System.err.println("(player) wrong frame");
-					System.err.println("(player) " + e.getMessage());
-					nextTrack();
-				}
-				
-				if (data!=null) {
-					os.write(data);
-					os.flush();
-				}
-			} else {
-				Thread.sleep(10);
-				mDecoder.msRead = 0f;
-				mDecoder.msTotal = 0f;
-				t1 = (new Date()).getTime();
-				t2 = t1;
-				dt = 0f;
-			}
-			
-			if (mForceDisconnectFlag) {
-				System.out.println("(player) disconnect flag: throwing DisconnectException");
-				throw new DisconnectException();
-			}		
-			
-			if (mDecoder.msRead>300) {
-				do {
-					t2 = (new Date()).getTime();
-					dt = mDecoder.msTotal - (t2-t1);
-					
-					Thread.sleep(10);
-				} while (dt>200);
-				
-				mDecoder.msRead = 0f;
 			}
 		}
 	}

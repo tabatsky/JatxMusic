@@ -422,7 +422,7 @@ public class MainFX extends Application implements UI {
 
 		Loopback.initLoopbackList();
 
-		Mp3Decoder decoder = new JLayerMp3Decoder();
+		MusicDecoder decoder = new JLayerMp3Decoder();
 		
 		Globals.tu = new TimeUpdater(this, decoder);
 		Globals.tu.start();
@@ -560,10 +560,8 @@ public class MainFX extends Application implements UI {
 		if (selectedDir!=null) {
 			System.out.println("dir: " + selectedDir.getAbsolutePath());
 			
-			List<File> fileList = FolderUtil.findFiles(selectedDir.getAbsolutePath(), ".*mp3$");
-			List<File> fileList1 = FolderUtil.findFiles(selectedDir.getAbsolutePath(), ".*wav$");
+			List<File> fileList = FolderUtil.findFiles(selectedDir.getAbsolutePath(), ".*mp3$|.*flac$");
 			mFileList.addAll(fileList);
-			mFileList.addAll(fileList1);
 			refreshList();
 			
 			mCurrentMusicDir = selectedDir;

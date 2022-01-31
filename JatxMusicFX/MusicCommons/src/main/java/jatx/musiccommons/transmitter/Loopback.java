@@ -4,6 +4,7 @@ import jatx.musiccommons.util.Frame;
 import xt.audio.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -100,10 +101,24 @@ public class Loopback {
     public static Frame readFrame(int position) throws LoopbackReadException {
         try {
             FrameData frameData = frameDataQueue.poll();
-            return Frame.fromLoopbackRawData(frameData.data, frameData.numBytesRead, position);
+            return fromLoopbackRawData(frameData.data, frameData.numBytesRead, position);
         } catch (Throwable e) {
             throw new LoopbackReadException(e);
         }
+    }
+
+    private static Frame fromLoopbackRawData(byte[] rawData, int dataSize, int position) {
+        Frame f = new Frame();
+
+        f.position = position;
+
+        f.freq = Loopback.FRAME_RATE;
+        f.channels = 2;
+
+        f.data = Arrays.copyOf(rawData, dataSize);
+        f.size = dataSize;
+
+        return f;
     }
 
     public static class FrameData {

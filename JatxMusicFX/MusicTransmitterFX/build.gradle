@@ -19,6 +19,7 @@ dependencies {
     compile 'org:jaudiotagger:2.0.3'
     compile 'org.xerial:sqlite-jdbc:3.8.11.2'
 
+    compile project(':flac')
     compile project(':MusicCommons')
 }
 

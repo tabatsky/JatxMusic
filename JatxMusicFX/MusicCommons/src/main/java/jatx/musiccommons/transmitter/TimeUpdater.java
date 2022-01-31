@@ -4,11 +4,9 @@ import java.lang.ref.WeakReference;
 
 public class TimeUpdater extends Thread {
 	private volatile WeakReference<UI> ref;
-	private volatile Mp3Decoder mDecoder;
 	
-	public TimeUpdater(UI ui, Mp3Decoder decoder) {
-		ref = new WeakReference<UI>(ui);
-		mDecoder = decoder;
+	public TimeUpdater(UI ui, MusicDecoder decoder) {
+		ref = new WeakReference(ui);
 	}
 	
 	@Override
@@ -16,9 +14,11 @@ public class TimeUpdater extends Thread {
 		try {
 			while (true) {
 				UI ui = ref.get();
-				
-				if (ui!=null) {
-					ui.setCurrentTime(mDecoder.currentMs, mDecoder.trackLengthSec*1000f);
+
+				MusicDecoder musicDecoder = MusicDecoder.getInstance();
+
+				if (ui != null && musicDecoder != null) {
+					ui.setCurrentTime(musicDecoder.currentMs, musicDecoder.trackLengthSec*1000f);
 				}
 				
 				Thread.sleep(500);

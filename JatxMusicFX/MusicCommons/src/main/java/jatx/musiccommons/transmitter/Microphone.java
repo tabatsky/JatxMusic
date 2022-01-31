@@ -4,6 +4,7 @@ import jatx.musiccommons.util.Frame;
 
 import javax.sound.sampled.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -80,11 +81,26 @@ public class Microphone {
     public static Frame readFrame(int position) throws MicrophoneReadException {
         try {
             int numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
-            return Frame.fromMicRawData(data, numBytesRead, position);
+            return fromMicRawData(data, numBytesRead, position);
         } catch (Throwable e) {
             throw new MicrophoneReadException(e);
         }
     }
+
+    private static Frame fromMicRawData(byte[] rawData, int dataSize, int position) {
+        Frame f = new Frame();
+
+        f.position = position;
+
+        f.freq = 48000;
+        f.channels = 2;
+
+        f.data = Arrays.copyOf(rawData, dataSize);
+        f.size = dataSize;
+
+        return f;
+    }
+
 
     public static class MicrophoneReadException extends Exception {
         public MicrophoneReadException(Throwable e) {

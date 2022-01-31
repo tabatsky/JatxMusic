@@ -18,17 +18,13 @@ import java.util.List;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.exceptions.CannotReadException;
-import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.audio.wav.WavFileReader;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.flac.FlacTag;
 
 public class TrackInfo {
-	//private static volatile ConcurrentHashMap<String,TrackInfo> sMemoryCache = new ConcurrentHashMap<String,TrackInfo>();
 
 	public static String getMicPath(int micIndex) {
 		return System.getProperty("os.name").toLowerCase().contains("win") ?
@@ -188,13 +184,6 @@ public class TrackInfo {
 		final String path = f.getAbsolutePath();
 		final long lastModified = f.lastModified();
 		
-		/*
-		TrackInfo info = sMemoryCache.get(path);
-		if (info!=null) {
-			return info;
-		} 
-		*/
-		
 		TrackInfo info;
 		if (sDBCache!=null) {
 			info = sDBCache.get(path, lastModified);
@@ -203,8 +192,7 @@ public class TrackInfo {
 				if (dbGetCounter%20==0) {
 					fileGetCounter++;
 				}
-				
-				//sMemoryCache.put(path, info);
+
 				return info;
 			}
 		}
@@ -214,34 +202,38 @@ public class TrackInfo {
 
 		try {
 			AudioFile af;
-			if (f.getName().endsWith(".wav")) {
-				af = new WavFileReader().read(f);
-			} else {
-			 	af = AudioFileIO.read(f);
-			}
+			af = AudioFileIO.read(f);
 			int len = af.getAudioHeader().getTrackLength();
 			int sec = len % 60;
 			int min = (len - sec) / 60;
 			info.length = String.format("%02d:%02d", min, sec);
 
-			MP3File mp3f = new MP3File(f);
+			if (f.getName().endsWith(".mp3")) {
+				MP3File mp3f = new MP3File(f);
 
-			Tag tag = mp3f.getTag();
-			info.artist = tag.getFirst(FieldKey.ARTIST).trim();
-			info.album = tag.getFirst(FieldKey.ALBUM).trim();
-			info.title = tag.getFirst(FieldKey.TITLE).trim();
-			info.year = tag.getFirst(FieldKey.YEAR);
-			info.number = tag.getFirst(FieldKey.TRACK);
-			if (!info.number.equals("")) {
-				Integer num = Integer.parseInt(info.number);
-				if (num < 10) {
-					info.number = "00" + num.toString();
-				} else if (num < 100) {
-					info.number = "0" + num.toString();
+				Tag tag = mp3f.getTag();
+				info.artist = tag.getFirst(FieldKey.ARTIST).trim();
+				info.album = tag.getFirst(FieldKey.ALBUM).trim();
+				info.title = tag.getFirst(FieldKey.TITLE).trim();
+				info.year = tag.getFirst(FieldKey.YEAR);
+				info.number = tag.getFirst(FieldKey.TRACK);
+				if (!info.number.equals("")) {
+					Integer num = Integer.parseInt(info.number);
+					if (num < 10) {
+						info.number = "00" + num;
+					} else if (num < 100) {
+						info.number = "0" + num;
+					}
 				}
+			} else if (f.getName().endsWith(".flac")) {
+				FlacTag tag = (FlacTag) af.getTag();
+				info.artist = tag.getFirst(FieldKey.ARTIST).trim();
+				info.album = tag.getFirst(FieldKey.ALBUM).trim();
+				info.title = tag.getFirst(FieldKey.TITLE).trim();
+				info.year = tag.getFirst(FieldKey.YEAR);
+				info.number = tag.getFirst(FieldKey.TRACK);
 			}
 
-			//sMemoryCache.put(path, info);
 			if (sDBCache != null) {
 				sDBCache.put(info, lastModified);
 			}

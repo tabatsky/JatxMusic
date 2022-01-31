@@ -25,9 +25,10 @@ public class Frame {
 	public int size;
 	public int freq;
 	public int channels;
+	public int depth;
 	public int position;
 	public byte[] data;
-	
+
 	public static Frame fromInputStream(InputStream is) throws IOException, InterruptedException {
 		int freq1 = 0;
 		int freq2 = 0;
@@ -45,6 +46,7 @@ public class Frame {
 		int pos4 = 0;
 		
 		int channels = 0;
+		int depth = 0;
 		
 		byte[] header = new byte[1];
 		
@@ -73,6 +75,8 @@ public class Frame {
 						freq4 = header[0]&0xff;
 					} else if (bytesRead==8) {
 						channels = header[0]&0xff;
+					} else if (bytesRead==9) {
+						depth = header[0]&0xff;
 					} else if (bytesRead==12) {
 						pos1 = header[0]&0xff;
 					} else if (bytesRead==13) {
@@ -115,84 +119,12 @@ public class Frame {
 		f.size = size;
 		f.freq = freq;
 		f.channels = channels;
+		f.depth = depth;
 		f.position = pos;
 		f.data = data;
 		
 		//System.out.println("frame: " + (new Date()).getTime()%100000);
 		
-		return f;
-	}
-	
-	public static Frame fromSampleBuffer(SampleBuffer sBuff, int position) 
-			throws WrongFrameException {
-		
-		Frame f = new Frame();
-		f.position = position;
-		
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream(10240);
-		
-		f.freq = sBuff.getSampleFrequency();
-		f.channels = sBuff.getChannelCount();
-		
-		short[] pcm = sBuff.getBuffer();
-		
-		boolean wrongRate = true;
-		
-		for (int rate: FRAME_RATES) {
-			if (rate==f.freq) wrongRate = false;
-		}
-		
-		if (wrongRate) {
-			throw new WrongFrameException("(player) wrong frame rate: " + Integer.toString(f.freq));
-		}
-		
-		if (f.channels==2) {
-			for (int i=0; i<pcm.length/2; i++) {				
-				short shrt1 = pcm[2*i];
-				short shrt2 = pcm[2*i+1];
-				
-				outStream.write(shrt1 & 0xff);
-				outStream.write((shrt1 >> 8 ) & 0xff);
-				outStream.write(shrt2 & 0xff);
-				outStream.write((shrt2 >> 8 ) & 0xff);				
-			}
-		} else if (f.channels==1) {
-			throw new WrongFrameException("(player) mono sound");
-		} else {
-			throw new WrongFrameException("(player) " + Integer.valueOf(f.channels).toString() + " channels");
-		}	
-		
-		f.data = outStream.toByteArray();
-		f.size = f.data.length;
-		
-		return f;
-	}
-
-	public static Frame fromMicRawData(byte[] rawData, int dataSize, int position) {
-		Frame f = new Frame();
-
-		f.position = position;
-
-		f.freq = 48000;
-		f.channels = 2;
-
-		f.data = Arrays.copyOf(rawData, dataSize);
-		f.size = dataSize;
-
-		return f;
-	}
-
-	public static Frame fromLoopbackRawData(byte[] rawData, int dataSize, int position) {
-		Frame f = new Frame();
-
-		f.position = position;
-
-		f.freq = Loopback.FRAME_RATE;
-		f.channels = 2;
-
-		f.data = Arrays.copyOf(rawData, dataSize);
-		f.size = dataSize;
-
 		return f;
 	}
 
@@ -213,6 +145,7 @@ public class Frame {
 		byte pos4 = (byte)((position>>0)&0xff);
 		
 		byte ch = (byte) (channels&0xff);
+		byte dpth = (byte) (depth&0xff);
 		
 		byte[] result = new byte[size + FRAME_HEADER_SIZE];
 		
@@ -235,6 +168,7 @@ public class Frame {
 		result[7] = freq4;
 		
 		result[8] = ch;
+		result[9] = dpth;
 		
 		result[12] = pos1;
 		result[13] = pos2;
@@ -249,7 +183,7 @@ public class Frame {
 	public static class WrongFrameException extends Exception {
 		private static final long serialVersionUID = 1768474402107432418L;
 		
-		WrongFrameException(String msg) {
+		public WrongFrameException(String msg) {
 			super(msg);
 		}
 	}
