@@ -155,7 +155,9 @@ public class MainFX extends Application implements UI {
 		        		System.out.println("double click on " + newPosition);
 
 		        		mCurrentPosition = newPosition;
-		        		
+
+						mCurrentPosition = isShuffle ? shuffledList.indexOf(newPosition) : newPosition;
+
 		        		isPlaying = true;
 		        		
 		        		mToogleButton.setGraphic(new ImageView(pauseImg));
@@ -176,21 +178,8 @@ public class MainFX extends Application implements UI {
 				@Override
 				public void handle(ActionEvent event) {
 					if (mFileList.size()==0) return;
-					
-					final int newPosition;
-					newPosition = (mCurrentPosition + 1) % mFileList.size();
 
-                    mCurrentPosition = newPosition;
-                    if (mCurrentPosition<0||mCurrentPosition>=mFileList.size()) {
-                        return;
-                    }
-
-                    final int realPosition;
-                    if (!isShuffle) {
-                        realPosition = mCurrentPosition;
-                    } else {
-                        realPosition = shuffledList.get(mCurrentPosition) % mFileList.size();
-                    }
+                    mCurrentPosition += 1;
 
                     isPlaying = true;
 	        		
@@ -199,7 +188,7 @@ public class MainFX extends Application implements UI {
 	        		Globals.tp.play();
 					Globals.tc.play();
 	        		
-	        		Globals.tp.setPosition(realPosition);
+	        		Globals.tp.setPosition(getRealPosition());
 				}
 			});
 			
@@ -209,23 +198,16 @@ public class MainFX extends Application implements UI {
 					if (mFileList.size()==0) return;
 					
 					final int newPosition;
-                    if (mCurrentPosition>0) {
-                        newPosition = mCurrentPosition - 1;
-                    } else {
-                        newPosition = mFileList.size() - 1;
-                    }
 
-                    mCurrentPosition = newPosition;
-                    if (mCurrentPosition<0||mCurrentPosition>=mFileList.size()) {
-                        return;
-                    }
+					if (mCurrentPosition > 0) {
+						newPosition = mCurrentPosition - 1;
+					} else if (isShuffle) {
+						newPosition = shuffledList.size() - 1;
+					} else {
+						newPosition = mFileList.size() - 1;
+					}
 
-                    final int realPosition;
-                    if (!isShuffle) {
-                        realPosition = mCurrentPosition;
-                    } else {
-                        realPosition = shuffledList.get(mCurrentPosition) % mFileList.size();
-                    }
+					mCurrentPosition = newPosition;
 
                     isPlaying = true;
 	        		
@@ -234,7 +216,7 @@ public class MainFX extends Application implements UI {
 	        		Globals.tp.play();
 					Globals.tc.play();
 	        		
-	        		Globals.tp.setPosition(realPosition);
+	        		Globals.tp.setPosition(getRealPosition());
 				}
 			});
 			
@@ -291,12 +273,23 @@ public class MainFX extends Application implements UI {
                 public void handle(ActionEvent event) {
                     isShuffle = !isShuffle;
                     if (isShuffle) {
+						mCurrentPosition = shuffledList.indexOf(mCurrentPosition);
                     	mToogleShuffle.setGraphic(new ImageView(shuffleImg));
 					} else {
+						if (mCurrentPosition >= 0) {
+							mCurrentPosition = shuffledList.get(mCurrentPosition);
+						}
                     	mToogleShuffle.setGraphic(new ImageView(repeatImg));
 					}
+					saveSettings();
                 }
             });
+
+			if (isShuffle) {
+				mToogleShuffle.setGraphic(new ImageView(shuffleImg));
+			} else {
+				mToogleShuffle.setGraphic(new ImageView(repeatImg));
+			}
 			
 			mProgressBar.setProgress(0.0);
 
@@ -683,6 +676,15 @@ public class MainFX extends Application implements UI {
 						Globals.volume = 100;
 					}
 				}
+
+				if (line.startsWith("IS_SHUFFLE=")) {
+					String isShuffleStr = line.replace("IS_SHUFFLE=", "");
+					try {
+						isShuffle = Boolean.parseBoolean(isShuffleStr);
+					} catch (Exception e) {
+						isShuffle = false;
+					}
+				}
 			}
 			
 			sc.close();
@@ -700,6 +702,7 @@ public class MainFX extends Application implements UI {
 			pw.println("CURRENT_MUSIC_DIR=" + mCurrentMusicDir.getAbsolutePath());
 			pw.println("CURRENT_LIST_DIR=" + mCurrentListDir.getAbsolutePath());
 			pw.println("VOLUME=" + Globals.volume);
+			pw.println("IS_SHUFFLE=" + isShuffle);
 			
 			pw.flush();
 			pw.close();
@@ -709,13 +712,18 @@ public class MainFX extends Application implements UI {
 	}
 
 	public void nextTrack() {
-        //Platform.runLater(new Runnable() {
-        //    @Override
-            //public void run() {
-                mFwdButton.fire();
-            //}
-        //});
+		mFwdButton.fire();
     }
+
+	private int getRealPosition() {
+		if (mCurrentPosition < 0) {
+			return mCurrentPosition;
+		} else if (isShuffle) {
+			return shuffledList.get(mCurrentPosition % shuffledList.size()) % mFileList.size();
+		} else {
+			return (mCurrentPosition % shuffledList.size()) % mFileList.size();
+		}
+	}
 
 	public static void main(String[] args) {
 		launch(args);
