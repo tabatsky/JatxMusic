@@ -22,8 +22,6 @@ import java.util.*;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.control.*;
@@ -32,7 +30,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -69,15 +66,15 @@ public class MainFX extends Application implements UI {
 	private MenuBar mMenuBar;
 	
 	private ListView<String> mListView;
-	private Button mToogleButton;
-	private Button mDownButton;
-	private Button mUpButton;
+	private Button mPlayPauseToggleButton;
+	private Button mVolumeDownButton;
+	private Button mVolumeUpButton;
 	private Button mWifiButton;
 	private Button mFwdButton;
 	private Button mRevButton;
 	private Label mVolLabel;
 	private ProgressBar mProgressBar;
-	private Button mToogleShuffle;
+	private Button mShuffleToggleButton;
 
 	private Stage mStage;
 	
@@ -90,7 +87,7 @@ public class MainFX extends Application implements UI {
 	
 	private int mCurrentPosition = -1;
 
-    private static List<Integer> shuffledList;
+    private static final List<Integer> shuffledList;
     static {
         shuffledList = new ArrayList<>();
         for (int i=0; i<10000; i++) {
@@ -118,7 +115,9 @@ public class MainFX extends Application implements UI {
 		loadSettings();
 		
 		try {			
-			Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
+			Parent root = FXMLLoader.load(
+					Objects.requireNonNull(
+							getClass().getResource("/fxml/main.fxml")));
 			Scene scene = new Scene(root);
 			
 			mMenuBar = (MenuBar) scene.lookup("#menu_pane_top");
@@ -126,203 +125,49 @@ public class MainFX extends Application implements UI {
 				for (final MenuItem item: menu.getItems()) {
 					final String itemId = item.getId();
 					
-					item.setOnAction(new EventHandler<ActionEvent>(){
-						@Override
-						public void handle(ActionEvent event) {
-							menuAction(itemId);
-						}
-					});
+					item.setOnAction(event -> menuAction(itemId));
 				}
 			}
 			
 			mListView = (ListView<String>) scene.lookup("#my_list");
-			mToogleButton = (Button) scene.lookup("#button_toogle");
+			mPlayPauseToggleButton = (Button) scene.lookup("#button_play_pause_toggle");
 			mVolLabel = (Label) scene.lookup("#vol_label");
-			mUpButton = (Button) scene.lookup("#button_up");
-			mDownButton = (Button) scene.lookup("#button_down");
+			mVolumeUpButton = (Button) scene.lookup("#button_up");
+			mVolumeDownButton = (Button) scene.lookup("#button_down");
 			mWifiButton = (Button) scene.lookup("#button_wifi");
 			mFwdButton = (Button) scene.lookup("#button_fwd");
 			mRevButton = (Button) scene.lookup("#button_rev");
 			mProgressBar = (ProgressBar) scene.lookup("#progress_bar");
-			mToogleShuffle = (Button) scene.lookup("#toogle_shuffle");
+			mShuffleToggleButton = (Button) scene.lookup("#button_shuffle_toggle");
 			
-			mListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-		        @Override
-		        public void handle(MouseEvent click) {
-		        	final int newPosition = mListView.getSelectionModel().getSelectedIndex();
+			mListView.setOnMouseClicked(click -> {
+				final int newPosition = mListView.getSelectionModel().getSelectedIndex();
 
-		        	if (click.getClickCount()==2) {
-		        		System.out.println("double click on " + newPosition);
-
-		        		mCurrentPosition = newPosition;
-
-						mCurrentPosition = isShuffle ? shuffledList.indexOf(newPosition) : newPosition;
-
-		        		isPlaying = true;
-		        		
-		        		mToogleButton.setGraphic(new ImageView(pauseImg));
-
-		        		Globals.tp.pause();
-		        		Globals.tc.pause();
-						Globals.tp.play();
-						Globals.tc.play();
-
-		        		Globals.tp.setPosition(newPosition);
-		        	} else if (click.getClickCount()==1) {
-		        		System.out.println("single clink on " + newPosition);
-		        	}
-		        }
-		    });
-			
-			mFwdButton.setOnAction(new EventHandler<ActionEvent>(){
-				@Override
-				public void handle(ActionEvent event) {
-					if (mFileList.size()==0) return;
-
-                    mCurrentPosition += 1;
-
-                    isPlaying = true;
-	        		
-	        		mToogleButton.setGraphic(new ImageView(pauseImg));
-	        		
-	        		Globals.tp.play();
-					Globals.tc.play();
-	        		
-	        		Globals.tp.setPosition(getRealPosition());
+				if (click.getClickCount()==2) {
+					onListItemDoubleClick(newPosition);
+				} else if (click.getClickCount()==1) {
+					System.out.println("single clink on " + newPosition);
 				}
 			});
 			
-			mRevButton.setOnAction(new EventHandler<ActionEvent>(){
-				@Override
-				public void handle(ActionEvent event) {
-					if (mFileList.size()==0) return;
-					
-					final int newPosition;
+			mFwdButton.setOnAction(event -> onFwdClick());
+			mRevButton.setOnAction(event -> onRevClick());
+			mPlayPauseToggleButton.setOnAction(event -> onPlayPauseToggleClick());
+			mVolumeUpButton.setOnAction(event -> onVolumeUpClick());
+			mVolumeDownButton.setOnAction(event -> onVolumeDownClick());
 
-					if (mCurrentPosition > 0) {
-						newPosition = mCurrentPosition - 1;
-					} else if (isShuffle) {
-						newPosition = shuffledList.size() - 1;
-					} else {
-						newPosition = mFileList.size() - 1;
-					}
-
-					mCurrentPosition = newPosition;
-
-                    isPlaying = true;
-	        		
-	        		mToogleButton.setGraphic(new ImageView(pauseImg));
-	        		
-	        		Globals.tp.play();
-					Globals.tc.play();
-	        		
-	        		Globals.tp.setPosition(getRealPosition());
-				}
-			});
-			
-			mToogleButton.setOnAction(new EventHandler<ActionEvent>(){
-				@Override
-				public void handle(ActionEvent event) {
-					isPlaying = !isPlaying;
-					System.out.println("toogle: " + isPlaying);
-					
-					if (isPlaying) {
-						if (mFileList.size()==0) {
-							isPlaying = false;
-							return;
-						} else if (mCurrentPosition==-1) {
-							Globals.tp.setPosition(0);
-			        		setPosition(0);
-						}
-						
-						mToogleButton.setGraphic(new ImageView(pauseImg));
-						
-						Globals.tp.play();
-						Globals.tc.play();
-					} else {
-						mToogleButton.setGraphic(new ImageView(playImg));
-						
-						Globals.tp.pause();
-						Globals.tc.pause();
-					}
-				}
-			});
-			
-			mUpButton.setOnAction(new EventHandler<ActionEvent>(){
-				@Override
-				public void handle(ActionEvent event) {
-					Globals.volume = Globals.volume<100?Globals.volume+5:100;
-					mVolLabel.setText(Globals.volume.toString()+"%");
-					Globals.tc.setVolume(Globals.volume);
-					saveSettings();
-				}
-			});
-			
-			mDownButton.setOnAction(new EventHandler<ActionEvent>(){
-				@Override
-				public void handle(ActionEvent event) {
-					Globals.volume = Globals.volume>0?Globals.volume-5:0;
-					mVolLabel.setText(Globals.volume.toString()+"%");
-					Globals.tc.setVolume(Globals.volume);
-					saveSettings();
-				}
-			});
-
-			mToogleShuffle.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    isShuffle = !isShuffle;
-                    if (isShuffle) {
-						mCurrentPosition = shuffledList.indexOf(mCurrentPosition);
-                    	mToogleShuffle.setGraphic(new ImageView(shuffleImg));
-					} else {
-						if (mCurrentPosition >= 0) {
-							mCurrentPosition = shuffledList.get(mCurrentPosition);
-						}
-                    	mToogleShuffle.setGraphic(new ImageView(repeatImg));
-					}
-					saveSettings();
-                }
-            });
-
+			mShuffleToggleButton.setOnAction(event -> onShuffleToggleClick());
 			if (isShuffle) {
-				mToogleShuffle.setGraphic(new ImageView(shuffleImg));
+				mShuffleToggleButton.setGraphic(new ImageView(shuffleImg));
 			} else {
-				mToogleShuffle.setGraphic(new ImageView(repeatImg));
+				mShuffleToggleButton.setGraphic(new ImageView(repeatImg));
 			}
 			
 			mProgressBar.setProgress(0.0);
-
-			mProgressBar.setOnMouseClicked(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event) {
-					if (event.getButton() == MouseButton.PRIMARY){
-						Bounds b1 = mProgressBar.getLayoutBounds();
-						double mouseX = event.getSceneX();
-						double percent = (((b1.getMinX() + mouseX ) * 100) / b1.getMaxX());
-						//correcting a percent, i don't know when it need
-						//percent -= 2;
-						mProgressBar.setProgress((percent) / 100.0);
-						//do something with progress in percent
-                        Globals.tp.seek((percent) / 100.0);
-					}
-				}
-			});
+			mProgressBar.setOnMouseClicked(event -> onProgressBarClick(event));
 
 			Platform.setImplicitExit(false);			
-			mStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			    @Override
-			    public void handle(WindowEvent event) {
-			    	Globals.tu.interrupt();
-			        Globals.tp.interrupt();
-			        Globals.tc.setFinishFlag();
-			        TrackInfo.destroy();
-			        
-			        System.out.println("close app");
-			        
-			        Platform.exit();
-			    }
-			});
+			mStage.setOnCloseRequest(event -> onCloseRequest());
 			
 			mStage.setScene(scene);
 			mStage.show();
@@ -335,20 +180,17 @@ public class MainFX extends Application implements UI {
 	
 	@Override
 	public void setWifiStatus(boolean status) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				isWifiOk = status;
-				System.out.println("wifi: " + isWifiOk);
-				
-				final Image wifiNoImg = new Image("/icons/ic_wifi_no.png");
-				final Image wifiOkImg = new Image("/icons/ic_wifi_ok.png");
-				
-				if (isWifiOk) {
-					mWifiButton.setGraphic(new ImageView(wifiOkImg));
-				} else {
-					mWifiButton.setGraphic(new ImageView(wifiNoImg));
-				}
+		Platform.runLater(() -> {
+			isWifiOk = status;
+			System.out.println("wifi: " + isWifiOk);
+
+			final Image wifiNoImg = new Image("/icons/ic_wifi_no.png");
+			final Image wifiOkImg = new Image("/icons/ic_wifi_ok.png");
+
+			if (isWifiOk) {
+				mWifiButton.setGraphic(new ImageView(wifiOkImg));
+			} else {
+				mWifiButton.setGraphic(new ImageView(wifiNoImg));
 			}
 		});
 	}
@@ -357,52 +199,35 @@ public class MainFX extends Application implements UI {
 	public void setPosition(final int position) {
 		System.out.println("current: " + position);
 
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				mListView.getSelectionModel().select(position);
-				mListView.scrollTo(position);
-			}
+		Platform.runLater(() -> {
+			mListView.getSelectionModel().select(position);
+			mListView.scrollTo(position);
 		});
 	}
 	
 	@Override
 	public void updateTrackList(List<TrackInfo> trackList, List<File> fileList) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				mItems = new MyList(trackList);
-				mListView.setItems(mItems);
-				setPosition(mCurrentPosition);
-				Globals.tp.setFileList(fileList);
-			}
+		Platform.runLater(() -> {
+			mItems = new MyList(trackList);
+			mListView.setItems(mItems);
+			setPosition(mCurrentPosition);
+			Globals.tp.setFileList(fileList);
 		});
 	}
 	
 	@Override
 	public void setCurrentTime(final float currentMs, final float trackLengthMs) {
-		//System.out.println(currentMs + ", " + trackLengthMs);
 		
 		if (trackLengthMs<=0) return;
 		
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				mProgressBar.setProgress(currentMs/trackLengthMs);
-			}
-		});
+		Platform.runLater(() -> mProgressBar.setProgress(currentMs/trackLengthMs));
 	}
 	
 	@Override
 	public void forcePause() {
 		isPlaying = false;
 		
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				mToogleButton.setGraphic(new ImageView(playImg));
-			}
-		});
+		Platform.runLater(() -> mPlayPauseToggleButton.setGraphic(new ImageView(playImg)));
 	}
 
 	
@@ -433,38 +258,47 @@ public class MainFX extends Application implements UI {
 	}
 	
 	private void menuAction(String itemId) {
-		if (itemId.equals("open_file_item")) {
-			System.out.println("Open File");
-			
-			openMP3File();
-		} else if (itemId.equals("open_folder_item")) {
-			System.out.println("Open Folder");
-			
-			openDir();
-		} else if (itemId.equals("add_mic_item")) {
-			System.out.println("Add Microphone");
+		switch (itemId) {
+			case "open_file_item":
+				System.out.println("Open File");
 
-			addMic();
-		} else if (itemId.equals("add_loopback_item")) {
-			System.out.println("Add Loopback");
+				openMusicFile();
+				break;
+			case "open_folder_item":
+				System.out.println("Open Folder");
 
-			addLoopback();
-		} else if (itemId.equals("remove_this_item")) {
-			System.out.println("Remove Selected Tracks");
-			
-			removeSelectedTracks();
-		} else if (itemId.equals("remove_all_item")) {
-			System.out.println("Remove All Tracks");
-			
-			removeAllTracks();
-		} else if (itemId.equals("m3u_import_item")) {
-			System.out.println("Import M3U");
-			
-			importM3U();
-		} else if (itemId.equals("m3u_export_item")) {
-			System.out.println("Export M3U");
-			
-			exportM3U();
+				openDir();
+				break;
+			case "add_mic_item":
+				System.out.println("Add Microphone");
+
+				addMic();
+				break;
+			case "add_loopback_item":
+				System.out.println("Add Loopback");
+
+				addLoopback();
+				break;
+			case "remove_this_item":
+				System.out.println("Remove Selected Tracks");
+
+				removeSelectedTracks();
+				break;
+			case "remove_all_item":
+				System.out.println("Remove All Tracks");
+
+				removeAllTracks();
+				break;
+			case "m3u_import_item":
+				System.out.println("Import M3U");
+
+				importM3U();
+				break;
+			case "m3u_export_item":
+				System.out.println("Export M3U");
+
+				exportM3U();
+				break;
 		}
 		
 	}
@@ -499,12 +333,12 @@ public class MainFX extends Application implements UI {
 		saveFileList(selectedFile.getAbsolutePath());
 	}
 	
-	private void openMP3File() {
+	private void openMusicFile() {
 		final FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open MP3 File");
 		fileChooser.setInitialDirectory(mCurrentMusicDir);
 		fileChooser.getExtensionFilters().add(
-				new ExtensionFilter("MP3 Files", "*.mp3"));
+				new ExtensionFilter("MP3 and Flac Files", "*.mp3", "*.flac"));
 		final File selectedFile = fileChooser.showOpenDialog(mStage);
 		
 		if (selectedFile!=null) {
@@ -592,7 +426,7 @@ public class MainFX extends Application implements UI {
 	}
 	
 	private void loadFileList(String path) {
-		mFileList = new ArrayList<File>();
+		mFileList = new ArrayList<>();
 		
 		File f;
 		if (path==null) {
@@ -630,9 +464,9 @@ public class MainFX extends Application implements UI {
 		
 		try {
 			PrintWriter pw = new PrintWriter(new FileOutputStream(f));
-			
-			for (int i=0; i<mFileList.size(); i++) {
-				pw.println(mFileList.get(i).getAbsolutePath());
+
+			for (File file : mFileList) {
+				pw.println(file.getAbsolutePath());
 			}
 			
 			pw.flush();
@@ -641,7 +475,12 @@ public class MainFX extends Application implements UI {
 			e.printStackTrace();
 		}
 	}
-	
+
+	private static final String KEY_CURRENT_MUSIC_DIR = "CURRENT_MUSIC_DIR=";
+	private static final String KEY_CURRENT_LIST_DIR = "CURRENT_LIST_DIR=";
+	private static final String KEY_VOLUME = "VOLUME=";
+	private static final String KEY_IS_SHUFFLE = "IS_SHUFFLE=";
+
 	private void loadSettings() {
 		mCurrentMusicDir = new File(System.getProperty("user.home"));
 		mCurrentListDir = new File(System.getProperty("user.home"));
@@ -656,20 +495,20 @@ public class MainFX extends Application implements UI {
 			while(sc.hasNextLine()) {
 				String line = sc.nextLine().trim();
 				
-				if (line.startsWith("CURRENT_MUSIC_DIR=")) {
-					String path = line.replace("CURRENT_MUSIC_DIR=", "");
+				if (line.startsWith(KEY_CURRENT_MUSIC_DIR)) {
+					String path = line.replace(KEY_CURRENT_MUSIC_DIR, "");
 					File fmd = new File(path);
 					if (fmd.exists()) mCurrentMusicDir = fmd;
 				}
 				
-				if (line.startsWith("CURRENT_LIST_DIR=")) {
-					String path = line.replace("CURRENT_LIST_DIR=", "");
+				if (line.startsWith(KEY_CURRENT_LIST_DIR)) {
+					String path = line.replace(KEY_CURRENT_LIST_DIR, "");
 					File fld = new File(path);
 					if (fld.exists()) mCurrentListDir = fld;
 				}
 				
-				if (line.startsWith("VOLUME=")) {
-					String volStr = line.replace("VOLUME=", "");
+				if (line.startsWith(KEY_VOLUME)) {
+					String volStr = line.replace(KEY_VOLUME, "");
 					try {
 						Globals.volume = Integer.parseInt(volStr);
 					} catch (NumberFormatException e) {
@@ -677,8 +516,8 @@ public class MainFX extends Application implements UI {
 					}
 				}
 
-				if (line.startsWith("IS_SHUFFLE=")) {
-					String isShuffleStr = line.replace("IS_SHUFFLE=", "");
+				if (line.startsWith(KEY_IS_SHUFFLE)) {
+					String isShuffleStr = line.replace(KEY_IS_SHUFFLE, "");
 					try {
 						isShuffle = Boolean.parseBoolean(isShuffleStr);
 					} catch (Exception e) {
@@ -699,10 +538,10 @@ public class MainFX extends Application implements UI {
 		try {
 			PrintWriter pw = new PrintWriter(f);
 			
-			pw.println("CURRENT_MUSIC_DIR=" + mCurrentMusicDir.getAbsolutePath());
-			pw.println("CURRENT_LIST_DIR=" + mCurrentListDir.getAbsolutePath());
-			pw.println("VOLUME=" + Globals.volume);
-			pw.println("IS_SHUFFLE=" + isShuffle);
+			pw.println(KEY_CURRENT_MUSIC_DIR + mCurrentMusicDir.getAbsolutePath());
+			pw.println(KEY_CURRENT_LIST_DIR + mCurrentListDir.getAbsolutePath());
+			pw.println(KEY_VOLUME + Globals.volume);
+			pw.println(KEY_IS_SHUFFLE + isShuffle);
 			
 			pw.flush();
 			pw.close();
@@ -710,10 +549,6 @@ public class MainFX extends Application implements UI {
 			e.printStackTrace();
 		}
 	}
-
-	public void nextTrack() {
-		mFwdButton.fire();
-    }
 
 	private int getRealPosition() {
 		if (mCurrentPosition < 0) {
@@ -723,6 +558,143 @@ public class MainFX extends Application implements UI {
 		} else {
 			return (mCurrentPosition % shuffledList.size()) % mFileList.size();
 		}
+	}
+
+	private void onShuffleToggleClick() {
+		isShuffle = !isShuffle;
+		if (isShuffle) {
+			mCurrentPosition = shuffledList.indexOf(mCurrentPosition);
+			mShuffleToggleButton.setGraphic(new ImageView(shuffleImg));
+		} else {
+			if (mCurrentPosition >= 0) {
+				mCurrentPosition = shuffledList.get(mCurrentPosition);
+			}
+			mShuffleToggleButton.setGraphic(new ImageView(repeatImg));
+		}
+		saveSettings();
+	}
+
+	private void onPlayPauseToggleClick() {
+		isPlaying = !isPlaying;
+		System.out.println("toogle: " + isPlaying);
+
+		if (isPlaying) {
+			if (mFileList.size()==0) {
+				isPlaying = false;
+				return;
+			} else if (mCurrentPosition==-1) {
+				Globals.tp.setPosition(0);
+				setPosition(0);
+			}
+
+			mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
+
+			Globals.tp.play();
+			Globals.tc.play();
+		} else {
+			mPlayPauseToggleButton.setGraphic(new ImageView(playImg));
+
+			Globals.tp.pause();
+			Globals.tc.pause();
+		}
+	}
+
+	private void onRevClick() {
+		if (mFileList.size()==0) return;
+
+		final int newPosition;
+
+		if (mCurrentPosition > 0) {
+			newPosition = mCurrentPosition - 1;
+		} else if (isShuffle) {
+			newPosition = shuffledList.size() - 1;
+		} else {
+			newPosition = mFileList.size() - 1;
+		}
+
+		mCurrentPosition = newPosition;
+
+		isPlaying = true;
+
+		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
+
+		Globals.tp.play();
+		Globals.tc.play();
+
+		Globals.tp.setPosition(getRealPosition());
+	}
+
+	private void onFwdClick() {
+		if (mFileList.size()==0) return;
+
+		mCurrentPosition += 1;
+
+		isPlaying = true;
+
+		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
+
+		Globals.tp.play();
+		Globals.tc.play();
+
+		Globals.tp.setPosition(getRealPosition());
+	}
+
+	private void onListItemDoubleClick(int newPosition) {
+		System.out.println("double click on " + newPosition);
+
+		mCurrentPosition = newPosition;
+
+		mCurrentPosition = isShuffle ? shuffledList.indexOf(newPosition) : newPosition;
+
+		isPlaying = true;
+
+		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
+
+		Globals.tp.pause();
+		Globals.tc.pause();
+		Globals.tp.play();
+		Globals.tc.play();
+
+		Globals.tp.setPosition(newPosition);
+	}
+
+	private void onVolumeUpClick() {
+		Globals.volume = Globals.volume < 100 ? Globals.volume + 5 : 100;
+		mVolLabel.setText(Globals.volume.toString() + "%");
+		Globals.tc.setVolume(Globals.volume);
+		saveSettings();
+	}
+
+	private void onVolumeDownClick() {
+		Globals.volume = Globals.volume > 0 ? Globals.volume - 5 : 0;
+		mVolLabel.setText(Globals.volume.toString() + "%");
+		Globals.tc.setVolume(Globals.volume);
+		saveSettings();
+	}
+
+	private void onProgressBarClick(MouseEvent event) {
+		if (event.getButton() == MouseButton.PRIMARY){
+			Bounds b1 = mProgressBar.getLayoutBounds();
+			double mouseX = event.getSceneX();
+			double percent = (((b1.getMinX() + mouseX ) * 100) / b1.getMaxX());
+			mProgressBar.setProgress((percent) / 100.0);
+			Globals.tp.seek((percent) / 100.0);
+		}
+	}
+
+	private void onCloseRequest() {
+		Globals.tu.interrupt();
+		Globals.tp.interrupt();
+		Globals.tc.setFinishFlag();
+		TrackInfo.destroy();
+
+		System.out.println("close app");
+
+		Platform.exit();
+	}
+
+	public void nextTrack() {
+		mFwdButton.fire();
 	}
 
 	public static void main(String[] args) {

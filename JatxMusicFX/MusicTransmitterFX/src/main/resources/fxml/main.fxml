@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -8,41 +7,30 @@
 <VBox 
 	id="main_pane"
 	stylesheets="/css/main.css"
-	xmlns:fx="http://javafx.com/fxml/1" 
 	xmlns="http://javafx.com/javafx/2.2" >
-		
+
 	<MenuBar id="menu_pane_top">
-		<menus>
-			<Menu text="Add" id="open_menu" styleClass="my_menu">
-  				<items>
-    				<MenuItem text="Add Track" id="open_file_item" />
-    				<MenuItem text="Add Folder" id="open_folder_item" />
-					<MenuItem text="Add Microphone" id="add_mic_item" />
-					<MenuItem text="Add Loopback" id="add_loopback_item" />
-  				</items>
-			</Menu>
-		
-			<Menu text="Remove" id="remove_menu" styleClass="my_menu">
-				<items>
-    				<MenuItem text="Remove Track" id="remove_this_item" />
-    				<MenuItem text="Remove All" id="remove_all_item" />
-  				</items>
-			</Menu>
-		
-			<Menu text="Playlist" id="playlist_menu" styleClass="my_menu">
-				<items>
-    				<MenuItem text="Export M3U" id="m3u_export_item" />
-    				<MenuItem text="Import M3U" id="m3u_import_item" />
-  				</items>
-			</Menu>
-		</menus>
+		<Menu text="Add" id="open_menu" styleClass="my_menu">
+			<MenuItem text="Add Track" id="open_file_item"/>
+			<MenuItem text="Add Folder" id="open_folder_item"/>
+			<MenuItem text="Add Microphone" id="add_mic_item"/>
+			<MenuItem text="Add Loopback" id="add_loopback_item"/>
+		</Menu>
+
+		<Menu text="Remove" id="remove_menu" styleClass="my_menu">
+			<MenuItem text="Remove Track" id="remove_this_item"/>
+			<MenuItem text="Remove All" id="remove_all_item"/>
+		</Menu>
+
+		<Menu text="Playlist" id="playlist_menu" styleClass="my_menu">
+			<MenuItem text="Export M3U" id="m3u_export_item"/>
+			<MenuItem text="Import M3U" id="m3u_import_item"/>
+		</Menu>
 	</MenuBar>
-		
-	<ListView id="my_list"></ListView>
+
+	<ListView id="my_list" />
     
-    <ProgressBar
-    	id="progress_bar"
-    	/>
+    <ProgressBar id="progress_bar" />
     
     <HBox id="button_pane_bottom">
     
@@ -62,7 +50,7 @@
     		</graphic>
     	</Button>
     	
-    	<Button styleClass="my_button_bottom" id="button_toogle">
+    	<Button styleClass="my_button_bottom" id="button_play_pause_toggle">
     		<graphic>
     			<ImageView>
                 	<Image url="/icons/ic_play.png"/>
@@ -97,7 +85,7 @@
     		</graphic>
     	</Button>
 
-		<Button styleClass="my_button_bottom" id="toogle_shuffle">
+		<Button styleClass="my_button_bottom" id="button_shuffle_toggle">
 			<graphic>
 				<ImageView>
 					<Image url="/icons/ic_repeat.png"/>

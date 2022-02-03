@@ -40,7 +40,7 @@
 	-fx-border-color:#000;
 }
 
-#button_toogle,#button_rev,#button_fwd {
+#button_play_pause_toggle,#button_rev,#button_fwd,#button_shuffle_toggle {
 	-fx-background-color:#ccc;
 }
 
