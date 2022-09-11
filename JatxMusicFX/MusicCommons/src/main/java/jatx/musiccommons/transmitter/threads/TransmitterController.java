@@ -71,7 +71,6 @@ public class TransmitterController extends Thread {
 	@Override
 	public void run() {
 		ServerSocket ss = null;
-		OutputStream os = null;
 		
 		try {
 			while(!finishFlag) {
@@ -113,19 +112,15 @@ public class TransmitterController extends Thread {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
 			System.err.println("(controller) thread interrupted");
-			try {
-				os.close();
-				System.out.println("(controller) outstream closed");
-			} catch (Exception ex) {
-				System.err.println("(controller) cannot close outstream");
-			}
+		} finally {
+			workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.setFinishWorkerFlag());
+			System.out.println("(controller) workers finished");
 			try {
 				ss.close();
 				System.out.println("(controller) server socket closed");
 			} catch (Exception ex) {
 				System.err.println("(controller) cannot close server socket");
 			}
-		} finally {
 			System.out.println("(controller) thread finished");
 		}
 	}

@@ -79,6 +79,8 @@ public class TransmitterPlayerConnectionKeeper extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
+            System.out.println("(player) thread interrupted");
+        } finally {
             workers.forEachValue(0L, transmitterPlayerWorker -> transmitterPlayerWorker.setFinishWorkerFlag());
             System.out.println("(player) workers interrupted");
             try {
@@ -87,7 +89,6 @@ public class TransmitterPlayerConnectionKeeper extends Thread {
             } catch (IOException | NullPointerException e2) {
                 e2.printStackTrace();
             }
-        } finally {
             System.out.println("(player) thread finished");
         }
     }

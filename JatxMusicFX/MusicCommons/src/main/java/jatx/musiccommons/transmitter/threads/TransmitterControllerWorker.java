@@ -33,6 +33,10 @@ public class TransmitterControllerWorker extends Thread {
         fifo = new ArrayBlockingQueue<>(2048);
     }
 
+    public void setFinishWorkerFlag() {
+        finishWorkerFlag = true;
+    }
+
     public void setVolume(int volume) {
         final String msg = "(controller " + threadId + ") set volume: " + volume;
         System.out.println(msg);
@@ -88,6 +92,11 @@ public class TransmitterControllerWorker extends Thread {
                     e.printStackTrace();
                 }
             }
+
+            byte[] data = new byte[]{COMMAND_STOP};
+
+            os.write(data);
+            os.flush();
         } catch (IOException e) {
             final String msg = "(controller " + threadId + ") socket disconnect";
             System.out.println(msg);
