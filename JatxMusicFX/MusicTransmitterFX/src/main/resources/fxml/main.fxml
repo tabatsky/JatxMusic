@@ -41,7 +41,10 @@
                 </ImageView>
     		</graphic>
     	</Button>
-        
+
+		<Label id="receiver_count_label" text="0">
+		</Label>
+
     	<Button styleClass="my_button_bottom" id="button_rev">
     		<graphic>
     			<ImageView>

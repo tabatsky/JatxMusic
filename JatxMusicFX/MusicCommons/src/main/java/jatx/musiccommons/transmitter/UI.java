@@ -14,15 +14,15 @@ import java.io.File;
 import java.util.List;
 
 public interface UI {
-	public void setWifiStatus(boolean status);
+	void updateWifiStatus(int count);
 	
-	public void setPosition(int position);
+	void setPosition(int position);
 	
-	public void updateTrackList(List<TrackInfo> trackList, List<File> fileList);
+	void updateTrackList(List<TrackInfo> trackList, List<File> fileList);
 	
-	public void setCurrentTime(float currentMs, float trackLengthMs);
+	void setCurrentTime(float currentMs, float trackLengthMs);
 	
-	public void forcePause();
+	void forcePause();
 
-	public void nextTrack();
+	void nextTrack();
 }

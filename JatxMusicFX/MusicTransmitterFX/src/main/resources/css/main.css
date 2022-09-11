@@ -48,8 +48,19 @@
 	-fx-background-color:#eee;
 }
 
+#receiver_count_label {
+    -fx-pref-width:30.0;
+	-fx-pref-height:60.0;
+	-fx-font-size:25.0;
+	-fx-alignment:center;
+	-fx-background-color:#eee;
+	-fx-border-width:0.0;
+	-fx-border-radius:0.0;
+	-fx-border-color:#000;
+}
+
 #vol_label {
-	-fx-pref-width:90.0;
+	-fx-pref-width:60.0;
 	-fx-pref-height:60.0;
 	-fx-font-size:25.0;
 	-fx-alignment:center;

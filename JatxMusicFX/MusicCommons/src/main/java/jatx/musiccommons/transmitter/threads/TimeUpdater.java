@@ -1,19 +1,22 @@
-package jatx.musiccommons.transmitter;
+package jatx.musiccommons.transmitter.threads;
+
+import jatx.musiccommons.transmitter.MusicDecoder;
+import jatx.musiccommons.transmitter.UI;
 
 import java.lang.ref.WeakReference;
 
 public class TimeUpdater extends Thread {
-	private volatile WeakReference<UI> ref;
+	private volatile WeakReference<UI> uiRef;
 	
 	public TimeUpdater(UI ui, MusicDecoder decoder) {
-		ref = new WeakReference(ui);
+		uiRef = new WeakReference(ui);
 	}
 	
 	@Override
 	public void run() {
 		try {
 			while (true) {
-				UI ui = ref.get();
+				UI ui = uiRef.get();
 
 				MusicDecoder musicDecoder = MusicDecoder.getInstance();
 

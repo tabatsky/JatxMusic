@@ -10,7 +10,13 @@
  ******************************************************************************/
 package jatx.musiccommons.transmitter;
 
+import jatx.musiccommons.transmitter.threads.TimeUpdater;
+import jatx.musiccommons.transmitter.threads.TransmitterController;
+import jatx.musiccommons.transmitter.threads.TransmitterPlayer;
+import jatx.musiccommons.transmitter.threads.TransmitterPlayerConnectionKeeper;
+
 public class Globals {
+	public static volatile TransmitterPlayerConnectionKeeper tpck;
 	public static volatile TransmitterController tc;
 	public static volatile TransmitterPlayer tp;
 	public static volatile TimeUpdater tu;

@@ -8,8 +8,9 @@
  * Contributors:
  *     Evgeny Tabatsky - initial API and implementation
  ******************************************************************************/
-package jatx.musiccommons.transmitter;
+package jatx.musiccommons.transmitter.threads;
 
+import jatx.musiccommons.transmitter.*;
 import jatx.musiccommons.util.Frame.WrongFrameException;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -18,18 +19,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TransmitterPlayer extends Thread {
 	public static final String LOG_TAG_PLAYER = "transmitter player";
-	
-	public static final int CONNECT_PORT_PLAYER = 7171;
-	
-	volatile WeakReference<UI> ref;
+
+	volatile WeakReference<UI> uiRef;
 	
 	volatile int mCount;
 	
@@ -37,8 +34,6 @@ public class TransmitterPlayer extends Thread {
 	
 	volatile int mPosition;
 	volatile boolean isPlaying;
-	
-	volatile boolean mForceDisconnectFlag;
 
 	volatile boolean microphoneOk;
 	volatile boolean loopbackOk;
@@ -50,22 +45,17 @@ public class TransmitterPlayer extends Thread {
 	volatile float dt;
 
 	public TransmitterPlayer(List<File> fileList, UI ui, MusicDecoder decoder) {
-		ref = new WeakReference(ui);
+		uiRef = new WeakReference(ui);
 		setFileList(fileList);
 		
 		isPlaying = false;
-		mForceDisconnectFlag = false;
 		
 		mPath = "";
 	}
 
 	public void setFileList(List<File> fileList) {
-		mFileList = new ArrayList<File>(fileList);
+		mFileList = new ArrayList<>(fileList);
 		mCount = mFileList.size();
-	}
-	
-	public void forceDisconnect() {
-		mForceDisconnectFlag = true;
 	}
 	
 	public void play() {
@@ -124,7 +114,7 @@ public class TransmitterPlayer extends Thread {
 		
 		Globals.tc.pause();
 		
-		final UI ui = ref.get();
+		final UI ui = uiRef.get();
 		if (ui!=null) {
 			ui.forcePause();
 		}
@@ -143,7 +133,7 @@ public class TransmitterPlayer extends Thread {
 		mPath = mFileList.get(mPosition).getAbsolutePath();
 		System.out.println("(player) path: " + mPath);
 	
-		final UI ui = ref.get();
+		final UI ui = uiRef.get();
 		if (ui!=null) {
 			final String info = TrackInfo.getByPath(mPath).toString();
 			System.out.println("(player) info: " + info);
@@ -163,7 +153,7 @@ public class TransmitterPlayer extends Thread {
 	
 	public void nextTrack() {
 		try {
-			final UI ui = ref.get();
+			final UI ui = uiRef.get();
 			if (ui!=null) {
 				ui.nextTrack();
 			}
@@ -180,91 +170,18 @@ public class TransmitterPlayer extends Thread {
 		OutputStream os = null;
 		
 		try {
-			while(true) {
-				Thread.sleep(100);
-				
-				ss = new ServerSocket(CONNECT_PORT_PLAYER);
-				System.out.println("(player) new server socket");
-				
-				try {
-					ss.setSoTimeout(Globals.SO_TIMEOUT);
-					Socket s = ss.accept();
-					os = s.getOutputStream();
-					
-					System.out.println("(player) socket connect");
-					{
-						final UI ui = ref.get();
-						if (ui!=null) {
-							ui.setWifiStatus(true);
-						}
-					}
-					
-					translateMusic(os);
-				} catch (SocketTimeoutException e) {
-					System.err.println("(player) socket timeout");
-					
-					mForceDisconnectFlag = false;
-					MusicDecoder.disconnectResetTimeFlag = true;
-				} catch (DisconnectException e){
-					System.err.println("(player) socket force disconnect");
-					System.err.println("(player) " + (new Date()).getTime()%10000);
-					
-					mForceDisconnectFlag = false;
-					MusicDecoder.disconnectResetTimeFlag = true;
-				} catch (IOException e) {
-					System.err.println("(player) socket disconnect");
-					System.err.println("(player) " + (new Date()).getTime()%10000);
-					
-					Globals.tc.forceDisconnect();
-					
-					Thread.sleep(250);
-					
-					mForceDisconnectFlag = false;
-					MusicDecoder.disconnectResetTimeFlag = true;
-				} finally {
-					try {
-						os.close();
-						System.out.println("(player) outstream closed");
-					} catch (Exception ex) {
-						System.err.println("(player) cannot close outstream");
-					}
-					try {
-						ss.close();
-						System.out.println("(player) server socket closed");
-					} catch (Exception ex) {
-						System.err.println("(player) cannot close server socket");
-					}
-					
-					final UI ui = ref.get();
-					if (ui!=null) {
-						ui.setWifiStatus(false);
-					}
-				}
-			}
+			translateMusic();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			//Log.e(LOG_TAG_PLAYER, exceptionToString(e));
 			System.err.println("(player) thread interrupted");
-			try {
-				os.close();
-				System.out.println("(player) outstream closed");
-			} catch (Exception ex) {
-				System.err.println("(player) cannot close outstream");
-			}
-			try {
-				ss.close();
-				System.out.println("(player) server socket closed");
-			} catch (Exception ex) {
-				System.err.println("(player) cannot close server socket");
-			}
 		}  finally {
 			System.out.println("(player) thread finished");
 		}
 	}
 	
-	private void translateMusic(OutputStream os) 
-			throws InterruptedException, IOException, DisconnectException {
+	private void translateMusic()
+			throws InterruptedException, IOException {
 		byte[] data;
 		
 		t1 = (new Date()).getTime();
@@ -335,8 +252,7 @@ public class TransmitterPlayer extends Thread {
 					}
 
 					if (data != null) {
-						os.write(data);
-						os.flush();
+						Globals.tpck.writeData(data);
 					}
 				} else {
 					Thread.sleep(10);
@@ -345,11 +261,6 @@ public class TransmitterPlayer extends Thread {
 					t1 = (new Date()).getTime();
 					t2 = t1;
 					dt = 0f;
-				}
-
-				if (mForceDisconnectFlag) {
-					System.out.println("(player) disconnect flag: throwing DisconnectException");
-					throw new DisconnectException();
 				}
 
 				if (musicDecoder.msRead > 300) {

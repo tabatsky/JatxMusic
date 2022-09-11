@@ -11,6 +11,10 @@
 package jatx.musictransmitter.fx;
 
 import jatx.musiccommons.transmitter.*;
+import jatx.musiccommons.transmitter.threads.TimeUpdater;
+import jatx.musiccommons.transmitter.threads.TransmitterController;
+import jatx.musiccommons.transmitter.threads.TransmitterPlayer;
+import jatx.musiccommons.transmitter.threads.TransmitterPlayerConnectionKeeper;
 import jatx.musiccommons.util.FolderUtil;
 
 import java.io.File;
@@ -61,6 +65,7 @@ public class MainFX extends Application implements UI {
 	
 	private volatile boolean isPlaying = false;
 	private volatile boolean isWifiOk = false;
+	private volatile int wifiReceiverCount = 0;
 	private volatile boolean isShuffle = false;
 	
 	private MenuBar mMenuBar;
@@ -73,6 +78,7 @@ public class MainFX extends Application implements UI {
 	private Button mFwdButton;
 	private Button mRevButton;
 	private Label mVolLabel;
+	private Label mReceiverCountLabel;
 	private ProgressBar mProgressBar;
 	private Button mShuffleToggleButton;
 
@@ -132,6 +138,7 @@ public class MainFX extends Application implements UI {
 			mListView = (ListView<String>) scene.lookup("#my_list");
 			mPlayPauseToggleButton = (Button) scene.lookup("#button_play_pause_toggle");
 			mVolLabel = (Label) scene.lookup("#vol_label");
+			mReceiverCountLabel = (Label) scene.lookup("#receiver_count_label");
 			mVolumeUpButton = (Button) scene.lookup("#button_up");
 			mVolumeDownButton = (Button) scene.lookup("#button_down");
 			mWifiButton = (Button) scene.lookup("#button_wifi");
@@ -179,9 +186,10 @@ public class MainFX extends Application implements UI {
 	}
 	
 	@Override
-	public void setWifiStatus(boolean status) {
+	public void updateWifiStatus(int count) {
 		Platform.runLater(() -> {
-			isWifiOk = status;
+			isWifiOk = count > 0;
+			wifiReceiverCount = count;
 			System.out.println("wifi: " + isWifiOk);
 
 			final Image wifiNoImg = new Image("/icons/ic_wifi_no.png");
@@ -191,6 +199,12 @@ public class MainFX extends Application implements UI {
 				mWifiButton.setGraphic(new ImageView(wifiOkImg));
 			} else {
 				mWifiButton.setGraphic(new ImageView(wifiNoImg));
+			}
+
+			mReceiverCountLabel.setText(String.valueOf(wifiReceiverCount));
+
+			if (!isWifiOk) {
+				forcePause();
 			}
 		});
 	}
@@ -226,6 +240,9 @@ public class MainFX extends Application implements UI {
 	@Override
 	public void forcePause() {
 		isPlaying = false;
+
+		Globals.tp.pause();
+		Globals.tc.pause();
 		
 		Platform.runLater(() -> mPlayPauseToggleButton.setGraphic(new ImageView(playImg)));
 	}
@@ -241,6 +258,9 @@ public class MainFX extends Application implements UI {
 		Loopback.initLoopbackList();
 
 		MusicDecoder decoder = new JLayerMp3Decoder();
+
+		Globals.tpck = new TransmitterPlayerConnectionKeeper(this);
+		Globals.tpck.start();
 		
 		Globals.tu = new TimeUpdater(this, decoder);
 		Globals.tu.start();
