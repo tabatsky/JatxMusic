@@ -14,13 +14,11 @@ import jatx.musiccommons.transmitter.Globals;
 import jatx.musiccommons.transmitter.UI;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 public class TransmitterController extends Thread {
 	public static final int CONNECT_PORT_CONTROLLER = 7172;
@@ -40,7 +38,7 @@ public class TransmitterController extends Thread {
 		finishFlag = false;
 		mForceDisconnectFlag = false;
 		
-		uiRef = new WeakReference<UI>(ui);
+		uiRef = new WeakReference<>(ui);
 	}
 	
 	public void setFinishFlag() {

@@ -1,6 +1,6 @@
 package jatx.musiccommons.transmitter;
 
-import jatx.musiccommons.util.Frame;
+import jatx.musiccommons.frame.Frame;
 import xt.audio.*;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class Loopback {
     private static volatile XtDevice device = null;
     private static volatile XtStream stream = null;
     private static volatile ArrayBlockingQueue<FrameData> frameDataQueue = new ArrayBlockingQueue<>(200);
-    private static List<String> deviceIdList = new ArrayList<>();
+    private static final List<String> deviceIdList = new ArrayList<>();
 
     public static int getDeviceCount() {
         return deviceIdList.size();
@@ -35,7 +35,7 @@ public class Loopback {
             Structs.XtDeviceStreamParams deviceParams = new Structs.XtDeviceStreamParams(streamParams, format, bufferSize.current);
 
             stream = device.openStream(deviceParams, null);
-            XtSafeBuffer safeBuffer = XtSafeBuffer.register(stream, true);
+            XtSafeBuffer.register(stream, true);
             stream.start();
         } catch (Throwable t) {
             t.printStackTrace();
@@ -79,7 +79,7 @@ public class Loopback {
         return 0;
     }
 
-    private static void processAudio(short[] audio, int frames) throws Exception {
+    private static void processAudio(short[] audio, int frames) {
         int numBytesRead = frames * 2 * 2;
         FrameData frameData = new FrameData(numBytesRead);
 

@@ -2,7 +2,7 @@ package jatx.musiccommons.transmitter;
 
 import io.nayuki.flac.common.StreamInfo;
 import io.nayuki.flac.decode.FlacDecoder;
-import jatx.musiccommons.util.Frame;
+import jatx.musiccommons.frame.Frame;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 
@@ -10,18 +10,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static jatx.musiccommons.util.Frame.FRAME_RATES;
-
 public class FlacMusicDecoder extends MusicDecoder {
     private FlacDecoder decoder;
     private StreamInfo streamInfo;
 
-    private File mCurrentFile = null;
-
     private float msFrame = 0f;
-    private int freq = 0;
     private int channels = 0;
-    private int depth = 0;
     private long numSamples = 0;
 
     @Override
@@ -29,8 +23,6 @@ public class FlacMusicDecoder extends MusicDecoder {
         if (f == null || !f.exists()) {
             throw new MusicDecoderException("File Read Error");
         }
-
-        mCurrentFile = f;
 
         try {
             AudioFile af;
@@ -43,8 +35,7 @@ public class FlacMusicDecoder extends MusicDecoder {
 
         try {
             decoder = new FlacDecoder(f);
-            while (decoder.readAndHandleMetadataBlock() != null){
-            }
+            while (decoder.readAndHandleMetadataBlock() != null){}
             streamInfo = decoder.streamInfo;
             numSamples = streamInfo.numSamples;
             if (numSamples == 0L) {
@@ -73,13 +64,16 @@ public class FlacMusicDecoder extends MusicDecoder {
             throw new MusicDecoderException("streamInfo is null");
         }
 
-        freq = streamInfo.sampleRate;
         channels = streamInfo.numChannels;
-        depth = streamInfo.sampleDepth;
+        int freq = streamInfo.sampleRate;
+        int depth = streamInfo.sampleDepth;
 
         boolean wrongRate = true;
-        for (int rate: FRAME_RATES) {
-            if (rate == freq) wrongRate = false;
+        for (int rate: Frame.FRAME_RATES) {
+            if (rate == freq) {
+                wrongRate = false;
+                break;
+            }
         }
         if (wrongRate) throw new Frame.WrongFrameException("(player) wrong frame rate: $freq");
 
@@ -120,8 +114,8 @@ public class FlacMusicDecoder extends MusicDecoder {
                 }
 
                 msFrame = blockSamples * 1e3f / freq;
-                msRead += msFrame;
-                msTotal += msFrame;
+                msReadFromFile += msFrame;
+                msSentToReceiver += msFrame;
                 currentMs += msFrame;
 
                 if (msFrame == 0f) {
@@ -153,10 +147,11 @@ public class FlacMusicDecoder extends MusicDecoder {
         long seekPosition = (long) (numSamples * progress);
         try {
             decoder.seekAndReadAudioBlock(seekPosition, samples, 0);
-            msRead = msFrame * (int) (trackLengthSec * 1000f * progress / msFrame);
+            msReadFromFile = msFrame * (int) (trackLengthSec * 1000f * progress / msFrame);
             currentMs = msFrame * (int) (trackLengthSec * 1000f * progress / msFrame);
         } catch (IOException e) {
             throw new MusicDecoderException("IOException");
         }
+        resetTimeFlag = true;
     }
 }

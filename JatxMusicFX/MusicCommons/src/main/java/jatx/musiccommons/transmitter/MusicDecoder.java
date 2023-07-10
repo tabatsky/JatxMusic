@@ -10,14 +10,13 @@
  ******************************************************************************/
 package jatx.musiccommons.transmitter;
 
-import jatx.musiccommons.util.Frame;
-import jatx.musiccommons.util.Frame.WrongFrameException;
+import jatx.musiccommons.frame.Frame;
+import jatx.musiccommons.frame.Frame.WrongFrameException;
 
 import java.io.File;
 
 public abstract class MusicDecoder {
 	public static volatile boolean resetTimeFlag = false;
-	public static volatile boolean disconnectResetTimeFlag = false;
 
 	protected static volatile int sPosition = 0;
 
@@ -25,8 +24,8 @@ public abstract class MusicDecoder {
 
 	protected static volatile boolean isMicActive = false;
 
-	public float msRead = 0f;
-	public float msTotal = 0f;
+	public float msReadFromFile = 0f;
+	public float msSentToReceiver = 0f;
 	
 	public float currentMs = 0f;
 	public int trackLengthSec = 0;

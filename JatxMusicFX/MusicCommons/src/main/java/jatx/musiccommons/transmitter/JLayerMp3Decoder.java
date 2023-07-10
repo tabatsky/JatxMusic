@@ -10,8 +10,8 @@
  ******************************************************************************/
 package jatx.musiccommons.transmitter;
 
-import jatx.musiccommons.util.Frame;
-import jatx.musiccommons.util.Frame.WrongFrameException;
+import jatx.musiccommons.frame.Frame;
+import jatx.musiccommons.frame.Frame.WrongFrameException;
 
 import java.io.*;
 
@@ -93,8 +93,8 @@ public class JLayerMp3Decoder extends MusicDecoder {
 			}
 			
 			msFrame = frameHeader.ms_per_frame();
-			msRead += msFrame;
-			msTotal += msFrame;
+			msReadFromFile += msFrame;
+			msSentToReceiver += msFrame;
 			currentMs += msFrame;
 
 			SampleBuffer output;
@@ -109,13 +109,9 @@ public class JLayerMp3Decoder extends MusicDecoder {
 			f = fromSampleBuffer(output, sPosition);
 				
 			mBitStream.closeFrame();
-		} catch (WrongFrameException e) {
-			throw e;
-		} catch (BitstreamException e) {
+		} catch (BitstreamException|DecoderException e) {
 			throw new MusicDecoderException(e);
-		} catch (DecoderException e) {
-			throw new MusicDecoderException(e);
-		} finally {}
+		}
 		
 		return f;
 	}
@@ -137,11 +133,14 @@ public class JLayerMp3Decoder extends MusicDecoder {
 		boolean wrongRate = true;
 
 		for (int rate: Frame.FRAME_RATES) {
-			if (rate==f.freq) wrongRate = false;
+			if (rate==f.freq) {
+				wrongRate = false;
+				break;
+			}
 		}
 
 		if (wrongRate) {
-			throw new Frame.WrongFrameException("(player) wrong frame rate: " + Integer.toString(f.freq));
+			throw new Frame.WrongFrameException("(player) wrong frame rate: " + f.freq);
 		}
 
 		if (f.channels==2) {
@@ -172,7 +171,7 @@ public class JLayerMp3Decoder extends MusicDecoder {
 
 		try {
 			while (currentMs<trackLengthSec*1000.0*progress) {
-				Header frameHeader = null;
+				Header frameHeader;
 				if (mBitStream != null) {
 					frameHeader = mBitStream.readFrame();
 				} else {
@@ -180,8 +179,7 @@ public class JLayerMp3Decoder extends MusicDecoder {
 				}
 
 				msFrame = frameHeader.ms_per_frame();
-				msRead += msFrame;
-				//msTotal += msFrame;
+				msReadFromFile += msFrame;
 				currentMs += msFrame;
 
 				mBitStream.closeFrame();

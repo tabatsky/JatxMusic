@@ -8,15 +8,10 @@
  * Contributors:
  *     Evgeny Tabatsky - initial API and implementation
  ******************************************************************************/
-package jatx.musiccommons.util;
+package jatx.musiccommons.frame;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-
-import jatx.musiccommons.transmitter.Loopback;
-import javazoom.jl.decoder.SampleBuffer;
 
 public class Frame {
 	public static final int FRAME_HEADER_SIZE = 64;
@@ -132,17 +127,17 @@ public class Frame {
 		byte freq1 = (byte)((freq>>24)&0xff);
 		byte freq2 = (byte)((freq>>16)&0xff);
 		byte freq3 = (byte)((freq>>8)&0xff);
-		byte freq4 = (byte)((freq>>0)&0xff);
+		byte freq4 = (byte)((freq)&0xff);
 		
 		byte size1 = (byte)((size>>24)&0xff);
 		byte size2 = (byte)((size>>16)&0xff);
 		byte size3 = (byte)((size>>8)&0xff);
-		byte size4 = (byte)((size>>0)&0xff);
+		byte size4 = (byte)((size)&0xff);
 		
 		byte pos1 = (byte)((position>>24)&0xff);
 		byte pos2 = (byte)((position>>16)&0xff);
 		byte pos3 = (byte)((position>>8)&0xff);
-		byte pos4 = (byte)((position>>0)&0xff);
+		byte pos4 = (byte)((position)&0xff);
 		
 		byte ch = (byte) (channels&0xff);
 		byte dpth = (byte) (depth&0xff);

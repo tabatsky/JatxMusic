@@ -257,15 +257,13 @@ public class MainFX extends Application implements UI {
 
 		Loopback.initLoopbackList();
 
-		MusicDecoder decoder = new JLayerMp3Decoder();
-
 		Globals.tpck = new TransmitterPlayerConnectionKeeper(this);
 		Globals.tpck.start();
 		
-		Globals.tu = new TimeUpdater(this, decoder);
+		Globals.tu = new TimeUpdater(this);
 		Globals.tu.start();
 		
-		Globals.tp = new TransmitterPlayer(mFileList, this, decoder);
+		Globals.tp = new TransmitterPlayer(mFileList, this);
 	    Globals.tp.start();
 	    
 	    Globals.tc = new TransmitterController(this);

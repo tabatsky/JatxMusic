@@ -10,10 +10,8 @@
  ******************************************************************************/
 package jatx.musiccommons.receiver;
 
-import jatx.musiccommons.receiver.SoundOut;
-import jatx.musiccommons.receiver.UI;
 import jatx.musiccommons.util.Debug;
-import jatx.musiccommons.util.Frame;
+import jatx.musiccommons.frame.Frame;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,12 +22,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 public class ReceiverPlayer extends Thread {
-	public static final String LOG_TAG_PLAYER = "receiver player";
-	
 	public static final int CONNECT_PORT_PLAYER = 7171;
-	
-	public static final int FRAME_HEADER_SIZE = 32;
-	
 	public static final int SOCKET_TIMEOUT = 1500;
 	
 	private volatile WeakReference<UI> ref;

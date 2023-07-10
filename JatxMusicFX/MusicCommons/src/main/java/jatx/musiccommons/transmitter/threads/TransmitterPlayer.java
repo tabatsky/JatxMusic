@@ -11,21 +11,17 @@
 package jatx.musiccommons.transmitter.threads;
 
 import jatx.musiccommons.transmitter.*;
-import jatx.musiccommons.util.Frame.WrongFrameException;
+import jatx.musiccommons.frame.Frame.WrongFrameException;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TransmitterPlayer extends Thread {
-	public static final String LOG_TAG_PLAYER = "transmitter player";
-
 	volatile WeakReference<UI> uiRef;
 	
 	volatile int mCount;
@@ -40,12 +36,12 @@ public class TransmitterPlayer extends Thread {
 
 	volatile String mPath;
 	
-	volatile long t1;
-	volatile long t2;
-	volatile float dt;
+	volatile long startTime;
+	volatile long currentTime;
+	volatile float deltaTimeExtraSentToReceiver;
 
-	public TransmitterPlayer(List<File> fileList, UI ui, MusicDecoder decoder) {
-		uiRef = new WeakReference(ui);
+	public TransmitterPlayer(List<File> fileList, UI ui) {
+		uiRef = new WeakReference<>(ui);
 		setFileList(fileList);
 		
 		isPlaying = false;
@@ -166,9 +162,6 @@ public class TransmitterPlayer extends Thread {
 	
 	@Override
 	public void run() {
-		ServerSocket ss = null;
-		OutputStream os = null;
-		
 		try {
 			translateMusic();
 		} catch (IOException e) {
@@ -182,56 +175,23 @@ public class TransmitterPlayer extends Thread {
 	
 	private void translateMusic()
 			throws InterruptedException, IOException {
-		byte[] data;
 		
-		t1 = (new Date()).getTime();
-		t2 = t1;
-		dt = 0f;
+		startTime = (new Date()).getTime();
+		currentTime = startTime;
+		deltaTimeExtraSentToReceiver = 0f;
 		
 		while (true) {
 			MusicDecoder musicDecoder = MusicDecoder.getInstance();
 			if (musicDecoder != null) {
 				if (isPlaying) {
 					if (MusicDecoder.resetTimeFlag) {
-						long t2_1 = t2;
-
-						do {
-							t2 = (new Date()).getTime();
-
-							dt = musicDecoder.msTotal - (t2 - t1);
-
-							Thread.sleep(10);
-						} while (dt > 0);
-
-						musicDecoder.msRead = 0f;
-						musicDecoder.msTotal = 0f;
-						t1 = (new Date()).getTime();
-						t2 = t1;
-
-						long t2_2 = t2;
-
-						System.out.println("(player) force delay: " + (t2_2 - t2_1));
-
-						MusicDecoder.resetTimeFlag = false;
+						resetTimeWithSynchronizing();
 					}
 
-					if (MusicDecoder.disconnectResetTimeFlag) {
-						t1 = (new Date()).getTime();
-						t2 = t1;
-						musicDecoder.msRead = 0f;
-						musicDecoder.msTotal = 0f;
-						MusicDecoder.disconnectResetTimeFlag = false;
-					}
+					byte[] data;
 
 					try {
-						if (TrackInfo.isMicPath(mPath)) {
-							data = Microphone.readFrame(mPosition).toByteArray();
-						} else if (TrackInfo.isLoopbackPath(mPath)) {
-							data = Loopback.readFrame(mPosition).toByteArray();
-						} else {
-							data = musicDecoder.readFrame().toByteArray();
-						}
-
+						data = tryReadFrame();
 					} catch (MusicDecoder.MusicDecoderException | Microphone.MicrophoneReadException e) {
 						data = null;
 						e.printStackTrace();
@@ -256,24 +216,70 @@ public class TransmitterPlayer extends Thread {
 					}
 				} else {
 					Thread.sleep(10);
-					musicDecoder.msRead = 0f;
-					musicDecoder.msTotal = 0f;
-					t1 = (new Date()).getTime();
-					t2 = t1;
-					dt = 0f;
+					resetTimeIfNotPlaying();
 				}
 
-				if (musicDecoder.msRead > 300) {
-					do {
-						t2 = (new Date()).getTime();
-						dt = musicDecoder.msTotal - (t2 - t1);
-
-						Thread.sleep(10);
-					} while (dt > 200);
-
-					musicDecoder.msRead = 0f;
-				}
+				syncReadingFromFileWithSendingToReceiver();
 			}
 		}
+	}
+
+	private void resetTimeWithSynchronizing() throws InterruptedException {
+		MusicDecoder musicDecoder = MusicDecoder.getInstance();
+		if (musicDecoder != null) {
+			do {
+				currentTime = (new Date()).getTime();
+				deltaTimeExtraSentToReceiver = musicDecoder.msSentToReceiver - (currentTime - startTime);
+				Thread.sleep(10);
+			} while (deltaTimeExtraSentToReceiver > 0);
+
+			musicDecoder.msReadFromFile = 0f;
+			musicDecoder.msSentToReceiver = 0f;
+			startTime = (new Date()).getTime();
+			currentTime = startTime;
+
+			MusicDecoder.resetTimeFlag = false;
+		}
+	}
+
+	private void resetTimeIfNotPlaying() {
+		MusicDecoder musicDecoder = MusicDecoder.getInstance();
+		if (musicDecoder != null) {
+			musicDecoder.msReadFromFile = 0f;
+			musicDecoder.msSentToReceiver = 0f;
+			startTime = (new Date()).getTime();
+			currentTime = startTime;
+			deltaTimeExtraSentToReceiver = 0f;
+		}
+	}
+
+	private void syncReadingFromFileWithSendingToReceiver() throws InterruptedException {
+		MusicDecoder musicDecoder = MusicDecoder.getInstance();
+		if (musicDecoder != null) {
+			if (musicDecoder.msReadFromFile > 300) {
+				do {
+					currentTime = (new Date()).getTime();
+					deltaTimeExtraSentToReceiver = musicDecoder.msSentToReceiver - (currentTime - startTime);
+
+					Thread.sleep(10);
+				} while (deltaTimeExtraSentToReceiver > 200);
+
+				musicDecoder.msReadFromFile = 0f;
+			}
+		}
+	}
+
+	private byte[] tryReadFrame() throws Microphone.MicrophoneReadException, Loopback.LoopbackReadException, MusicDecoder.MusicDecoderException, WrongFrameException, MusicDecoder.TrackFinishException {
+		if (TrackInfo.isMicPath(mPath)) {
+			return Microphone.readFrame(mPosition).toByteArray();
+		} else if (TrackInfo.isLoopbackPath(mPath)) {
+			return Loopback.readFrame(mPosition).toByteArray();
+		} else {
+			MusicDecoder musicDecoder = MusicDecoder.getInstance();
+			if (musicDecoder != null) {
+				return musicDecoder.readFrame().toByteArray();
+			}
+		}
+		return null;
 	}
 }

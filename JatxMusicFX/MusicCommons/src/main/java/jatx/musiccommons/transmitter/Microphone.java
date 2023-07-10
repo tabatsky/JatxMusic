@@ -1,6 +1,6 @@
 package jatx.musiccommons.transmitter;
 
-import jatx.musiccommons.util.Frame;
+import jatx.musiccommons.frame.Frame;
 
 import javax.sound.sampled.*;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class Microphone {
     public static final AudioFormat format =
             new AudioFormat(48000.0f, 16, 2, true, false);
     private static volatile TargetDataLine microphone;
-    private static List<Line> lineList = new ArrayList<>();
+    private static final List<Line> lineList = new ArrayList<>();
     private static final int CHUNK_SIZE = 10240;
     private static volatile byte[] data = new byte[CHUNK_SIZE];
 

@@ -8,8 +8,8 @@ import java.lang.ref.WeakReference;
 public class TimeUpdater extends Thread {
 	private volatile WeakReference<UI> uiRef;
 	
-	public TimeUpdater(UI ui, MusicDecoder decoder) {
-		uiRef = new WeakReference(ui);
+	public TimeUpdater(UI ui) {
+		uiRef = new WeakReference<>(ui);
 	}
 	
 	@Override
