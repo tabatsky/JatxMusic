@@ -57,12 +57,6 @@ public class TransmitterControllerWorker extends Thread {
         fifo.offer(COMMAND_PAUSE);
     }
 
-    public void sendStop() {
-        final String msg = "(controller " + threadId + ") stop";
-        System.out.println(msg);
-        fifo.offer(COMMAND_STOP);
-    }
-
     @Override
     public void run() {
         threadId = Thread.currentThread().getId();
