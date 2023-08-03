@@ -607,7 +607,7 @@ public class MainFX extends Application implements UI {
 
 			mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
 
-			setVolumeAndPlay();
+			play();
 		} else {
 			mPlayPauseToggleButton.setGraphic(new ImageView(playImg));
 
@@ -634,7 +634,7 @@ public class MainFX extends Application implements UI {
 
 		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
 
-		setVolumeAndPlay();
+		play();
 
 		Globals.tp.setPosition(getRealPosition());
 	}
@@ -648,7 +648,7 @@ public class MainFX extends Application implements UI {
 
 		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
 
-		setVolumeAndPlay();
+		play();
 
 		Globals.tp.setPosition(getRealPosition());
 	}
@@ -665,13 +665,12 @@ public class MainFX extends Application implements UI {
 		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
 
 		pause();
-		setVolumeAndPlay();
+		play();
 
 		Globals.tp.setPosition(newPosition);
 	}
 
-	private void setVolumeAndPlay() {
-		Globals.tc.setVolume(Globals.volume);
+	private void play() {
 		Globals.tp.play();
 		Globals.tc.play();
 	}
