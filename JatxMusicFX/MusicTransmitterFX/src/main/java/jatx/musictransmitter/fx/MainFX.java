@@ -709,6 +709,8 @@ public class MainFX extends Application implements UI {
 		Globals.tu.interrupt();
 		Globals.tp.interrupt();
 		Globals.tc.setFinishFlag();
+		Globals.tu.interrupt();
+		Globals.tpck.interrupt();
 		TrackInfo.destroy();
 
 		System.out.println("close app");
