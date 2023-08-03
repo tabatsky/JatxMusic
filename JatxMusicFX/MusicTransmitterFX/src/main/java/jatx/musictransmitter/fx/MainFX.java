@@ -607,13 +607,11 @@ public class MainFX extends Application implements UI {
 
 			mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
 
-			Globals.tp.play();
-			Globals.tc.play();
+			setVolumeAndPlay();
 		} else {
 			mPlayPauseToggleButton.setGraphic(new ImageView(playImg));
 
-			Globals.tp.pause();
-			Globals.tc.pause();
+			pause();
 		}
 	}
 
@@ -636,8 +634,7 @@ public class MainFX extends Application implements UI {
 
 		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
 
-		Globals.tp.play();
-		Globals.tc.play();
+		setVolumeAndPlay();
 
 		Globals.tp.setPosition(getRealPosition());
 	}
@@ -651,8 +648,7 @@ public class MainFX extends Application implements UI {
 
 		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
 
-		Globals.tp.play();
-		Globals.tc.play();
+		setVolumeAndPlay();
 
 		Globals.tp.setPosition(getRealPosition());
 	}
@@ -668,12 +664,21 @@ public class MainFX extends Application implements UI {
 
 		mPlayPauseToggleButton.setGraphic(new ImageView(pauseImg));
 
-		Globals.tp.pause();
-		Globals.tc.pause();
-		Globals.tp.play();
-		Globals.tc.play();
+		pause();
+		setVolumeAndPlay();
 
 		Globals.tp.setPosition(newPosition);
+	}
+
+	private void setVolumeAndPlay() {
+		Globals.tc.setVolume(Globals.volume);
+		Globals.tp.play();
+		Globals.tc.play();
+	}
+
+	private void pause() {
+		Globals.tp.pause();
+		Globals.tc.pause();
 	}
 
 	private void onVolumeUpClick() {
