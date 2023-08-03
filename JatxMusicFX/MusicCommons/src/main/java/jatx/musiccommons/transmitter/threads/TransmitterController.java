@@ -63,7 +63,7 @@ public class TransmitterController extends Thread {
 
 	public void pause() {
 		System.out.println("(controller) pause");
-		workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.play());
+		workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.pause());
 	}
 	
 	@Override
