@@ -96,35 +96,37 @@ public class TransmitterController extends Thread {
 			while(!finishFlag) {
 				Thread.sleep(100);
 
-				ss = new ServerSocket(CONNECT_PORT_CONTROLLER);
-				System.out.println("(controller) new server socket");
+				if (isNetworkingMode) {
+					ss = new ServerSocket(CONNECT_PORT_CONTROLLER);
+					System.out.println("(controller) new server socket");
 
-				try {
-					ss.setSoTimeout(Globals.SO_TIMEOUT);
-					Socket s = ss.accept();
-					System.out.println("(controller) server socket accept");
-					String host = s.getInetAddress().getHostAddress();
-					TransmitterControllerWorker worker = new TransmitterControllerWorker(s, host);
-					worker.start();
-					System.out.println("(controller) worker $it started");
-					workers.put(host, worker);
-					final String msg = "(controller) total workers: " + workers.size();
-					System.out.println(msg);
-					worker.onWorkerStopped = () -> {
-						System.out.println("(controller) worker $host stopped");
-						workers.remove(host);
-						final String msg2 = "(player) total workers: " + workers.size();
-						System.out.println(msg2);
-					};
-					setVolume(volume);
-				} catch (SocketTimeoutException e) {
-					System.out.println("(controller) socket timeout");
-				} finally {
 					try {
-						ss.close();
-						System.out.println("(controller) server socket closed");
-					} catch (IOException e) {
-						e.printStackTrace();
+						ss.setSoTimeout(Globals.SO_TIMEOUT);
+						Socket s = ss.accept();
+						System.out.println("(controller) server socket accept");
+						String host = s.getInetAddress().getHostAddress();
+						TransmitterControllerWorker worker = new TransmitterControllerWorker(s, host);
+						worker.start();
+						System.out.println("(controller) worker $it started");
+						workers.put(host, worker);
+						final String msg = "(controller) total workers: " + workers.size();
+						System.out.println(msg);
+						worker.onWorkerStopped = () -> {
+							System.out.println("(controller) worker $host stopped");
+							workers.remove(host);
+							final String msg2 = "(player) total workers: " + workers.size();
+							System.out.println(msg2);
+						};
+						setVolume(volume);
+					} catch (SocketTimeoutException e) {
+						System.out.println("(controller) socket timeout");
+					} finally {
+						try {
+							ss.close();
+							System.out.println("(controller) server socket closed");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
