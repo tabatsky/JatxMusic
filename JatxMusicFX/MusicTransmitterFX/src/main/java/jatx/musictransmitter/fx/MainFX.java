@@ -224,6 +224,7 @@ public class MainFX extends Application implements UI {
 		forcePause();
 		switchLocalOrNetworkingModeUi();
 		switchLocalOrNetworkingModeThreads();
+		saveSettings();
 	}
 
 	private void switchLocalOrNetworkingModeUi() {
@@ -560,7 +561,7 @@ public class MainFX extends Application implements UI {
 	private static final String KEY_VOLUME = "VOLUME=";
 	private static final String KEY_IS_SHUFFLE = "IS_SHUFFLE=";
 
-	private static final String KEY_LOCAL_MODE = "IS_LOCAL_MODE=";
+	private static final String KEY_IS_LOCAL_MODE = "IS_LOCAL_MODE=";
 
 	private void loadSettings() {
 		mCurrentMusicDir = new File(System.getProperty("user.home"));
@@ -606,8 +607,8 @@ public class MainFX extends Application implements UI {
 					}
 				}
 
-				if (line.startsWith(KEY_LOCAL_MODE)) {
-					String isLocalModeStr = line.replace(KEY_LOCAL_MODE, "");
+				if (line.startsWith(KEY_IS_LOCAL_MODE)) {
+					String isLocalModeStr = line.replace(KEY_IS_LOCAL_MODE, "");
 					try {
 						isLocalMode = Boolean.parseBoolean(isLocalModeStr);
 					} catch (Exception e) {
@@ -632,6 +633,7 @@ public class MainFX extends Application implements UI {
 			pw.println(KEY_CURRENT_LIST_DIR + mCurrentListDir.getAbsolutePath());
 			pw.println(KEY_VOLUME + Globals.volume);
 			pw.println(KEY_IS_SHUFFLE + isShuffle);
+			pw.println(KEY_IS_LOCAL_MODE + isLocalMode);
 			
 			pw.flush();
 			pw.close();
