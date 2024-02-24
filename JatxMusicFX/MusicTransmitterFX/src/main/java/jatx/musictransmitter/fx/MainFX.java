@@ -30,6 +30,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -67,6 +68,8 @@ public class MainFX extends Application implements UI {
 	private volatile boolean isWifiOk = false;
 	private volatile int wifiReceiverCount = 0;
 	private volatile boolean isShuffle = false;
+
+	private volatile boolean isLocalMode = false;
 	
 	private MenuBar mMenuBar;
 	
@@ -74,6 +77,10 @@ public class MainFX extends Application implements UI {
 	private Button mPlayPauseToggleButton;
 	private Button mVolumeDownButton;
 	private Button mVolumeUpButton;
+
+	private HBox mWifiOrSoundGroup;
+	private Button mSoundButton;
+	private HBox mWifiGroup;
 	private Button mWifiButton;
 	private Button mFwdButton;
 	private Button mRevButton;
@@ -141,7 +148,14 @@ public class MainFX extends Application implements UI {
 			mReceiverCountLabel = (Label) scene.lookup("#receiver_count_label");
 			mVolumeUpButton = (Button) scene.lookup("#button_up");
 			mVolumeDownButton = (Button) scene.lookup("#button_down");
+
+			mWifiOrSoundGroup = (HBox) scene.lookup("#wifi_or_sound_group");
+			mSoundButton = (Button) scene.lookup("#button_sound");
+			mWifiGroup = (HBox) scene.lookup("#wifi_group");
 			mWifiButton = (Button) scene.lookup("#button_wifi");
+
+			switchLocalOrNetworkingMode();
+
 			mFwdButton = (Button) scene.lookup("#button_fwd");
 			mRevButton = (Button) scene.lookup("#button_rev");
 			mProgressBar = (ProgressBar) scene.lookup("#progress_bar");
@@ -206,6 +220,35 @@ public class MainFX extends Application implements UI {
 			if (!isWifiOk) {
 				forcePause();
 			}
+		});
+	}
+
+	public void switchLocalOrNetworkingMode() {
+		System.out.println("switching");
+		Platform.runLater(() -> {
+			if (isLocalMode) {
+				mWifiOrSoundGroup.getChildren().remove(mWifiGroup);
+				if (!mWifiOrSoundGroup.getChildren().contains(mSoundButton)) {
+					mWifiOrSoundGroup.getChildren().add(0, mSoundButton);
+				}
+			} else {
+				mWifiOrSoundGroup.getChildren().remove(mSoundButton);
+				if (!mWifiOrSoundGroup.getChildren().contains(mWifiGroup)) {
+					mWifiOrSoundGroup.getChildren().add(0, mWifiGroup);
+				}
+			}
+			mWifiButton.setOnMousePressed(click -> {
+				isLocalMode = !isLocalMode;
+				switchLocalOrNetworkingMode();
+			});
+			mReceiverCountLabel.setOnMousePressed(click -> {
+				isLocalMode = !isLocalMode;
+				switchLocalOrNetworkingMode();
+			});
+			mSoundButton.setOnMousePressed(click -> {
+				isLocalMode = !isLocalMode;
+				switchLocalOrNetworkingMode();
+			});
 		});
 	}
 	
@@ -499,6 +542,8 @@ public class MainFX extends Application implements UI {
 	private static final String KEY_VOLUME = "VOLUME=";
 	private static final String KEY_IS_SHUFFLE = "IS_SHUFFLE=";
 
+	private static final String KEY_LOCAL_MODE = "IS_LOCAL_MODE=";
+
 	private void loadSettings() {
 		mCurrentMusicDir = new File(System.getProperty("user.home"));
 		mCurrentListDir = new File(System.getProperty("user.home"));
@@ -540,6 +585,15 @@ public class MainFX extends Application implements UI {
 						isShuffle = Boolean.parseBoolean(isShuffleStr);
 					} catch (Exception e) {
 						isShuffle = false;
+					}
+				}
+
+				if (line.startsWith(KEY_LOCAL_MODE)) {
+					String isLocalModeStr = line.replace(KEY_LOCAL_MODE, "");
+					try {
+						isLocalMode = Boolean.parseBoolean(isLocalModeStr);
+					} catch (Exception e) {
+						isLocalMode = true;
 					}
 				}
 			}

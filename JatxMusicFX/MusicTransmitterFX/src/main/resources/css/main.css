@@ -40,6 +40,24 @@
 	-fx-border-color:#000;
 }
 
+.sound_button_or_wifi_group_bottom {
+	-fx-pref-width:90.0;
+	-fx-pref-height:60.0;
+	-fx-background-color:#fff;
+	-fx-border-width:0.0;
+	-fx-border-radius:0.0;
+	-fx-border-color:#000;
+}
+
+.wifi_or_sound_group_bottom {
+	-fx-pref-width:90.0;
+	-fx-pref-height:60.0;
+	-fx-background-color:#fff;
+	-fx-border-width:0.0;
+	-fx-border-radius:0.0;
+	-fx-border-color:#000;
+}
+
 #button_play_pause_toggle,#button_rev,#button_fwd,#button_shuffle_toggle {
 	-fx-background-color:#ccc;
 }

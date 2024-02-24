@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox 
+<VBox
 	id="main_pane"
 	stylesheets="/css/main.css"
 	xmlns="http://javafx.com/javafx/2.2" >
@@ -33,17 +33,29 @@
     <ProgressBar id="progress_bar" />
     
     <HBox id="button_pane_bottom">
-    
-    	<Button styleClass="my_button_bottom" id="button_wifi">
-    		<graphic>
-    			<ImageView>
-                	<Image url="/icons/ic_wifi_no.png"/>
-                </ImageView>
-    		</graphic>
-    	</Button>
 
-		<Label id="receiver_count_label" text="0">
-		</Label>
+		<HBox styleClass="wifi_or_sound_group_bottom" id="wifi_or_sound_group">
+			<Button styleClass="sound_button_or_wifi_group_bottom" id="button_sound">
+				<graphic>
+					<ImageView>
+						<Image url="/icons/ic_sound.png"/>
+					</ImageView>
+				</graphic>
+			</Button>
+
+			<HBox styleClass="sound_button_or_wifi_group_bottom" id="wifi_group">
+				<Button styleClass="my_button_bottom" id="button_wifi">
+					<graphic>
+						<ImageView>
+							<Image url="/icons/ic_wifi_no.png"/>
+						</ImageView>
+					</graphic>
+				</Button>
+
+				<Label id="receiver_count_label" text="0">
+				</Label>
+			</HBox>
+		</HBox>
 
     	<Button styleClass="my_button_bottom" id="button_rev">
     		<graphic>
