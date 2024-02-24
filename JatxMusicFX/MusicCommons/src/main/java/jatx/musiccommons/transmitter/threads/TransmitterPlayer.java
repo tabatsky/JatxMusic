@@ -262,14 +262,15 @@ public class TransmitterPlayer extends Thread {
 
 	private void syncReadingFromFileWithSendingToReceiver() throws InterruptedException {
 		MusicDecoder musicDecoder = MusicDecoder.getInstance();
+		final int multiplier = isNetworkingMode ? 10 : 1;
 		if (musicDecoder != null) {
-			if (musicDecoder.msReadFromFile > 300) {
+			if (musicDecoder.msReadFromFile > 30 * multiplier) {
 				do {
 					currentTime = (new Date()).getTime();
 					deltaTimeExtraSentToReceiver = musicDecoder.msSentToReceiver - (currentTime - startTime);
 
 					Thread.sleep(10);
-				} while (deltaTimeExtraSentToReceiver > 200);
+				} while (deltaTimeExtraSentToReceiver > 20 * multiplier);
 
 				musicDecoder.msReadFromFile = 0f;
 			}
