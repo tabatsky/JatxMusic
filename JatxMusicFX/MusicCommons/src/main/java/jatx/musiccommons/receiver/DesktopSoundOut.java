@@ -8,7 +8,7 @@
  * Contributors:
  *     Evgeny Tabatsky - initial API and implementation
  ******************************************************************************/
-package jatx.musicreceiver.fx;
+package jatx.musiccommons.receiver;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -16,8 +16,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-
-import jatx.musiccommons.receiver.SoundOut;
 
 public class DesktopSoundOut implements SoundOut {
 	private SourceDataLine mSpeakers = null;

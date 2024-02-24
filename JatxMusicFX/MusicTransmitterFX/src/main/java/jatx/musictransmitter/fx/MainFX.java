@@ -11,10 +11,7 @@
 package jatx.musictransmitter.fx;
 
 import jatx.musiccommons.transmitter.*;
-import jatx.musiccommons.transmitter.threads.TimeUpdater;
-import jatx.musiccommons.transmitter.threads.TransmitterController;
-import jatx.musiccommons.transmitter.threads.TransmitterPlayer;
-import jatx.musiccommons.transmitter.threads.TransmitterPlayerConnectionKeeper;
+import jatx.musiccommons.transmitter.threads.*;
 import jatx.musiccommons.util.FolderUtil;
 
 import java.io.File;
@@ -154,7 +151,7 @@ public class MainFX extends Application implements UI {
 			mWifiGroup = (HBox) scene.lookup("#wifi_group");
 			mWifiButton = (Button) scene.lookup("#button_wifi");
 
-			switchLocalOrNetworkingMode();
+			switchLocalOrNetworkingModeUi();
 
 			mFwdButton = (Button) scene.lookup("#button_fwd");
 			mRevButton = (Button) scene.lookup("#button_rev");
@@ -223,7 +220,13 @@ public class MainFX extends Application implements UI {
 		});
 	}
 
-	public void switchLocalOrNetworkingMode() {
+	private void switchLocalOrNetworkingMode() {
+		forcePause();
+		switchLocalOrNetworkingModeUi();
+		switchLocalOrNetworkingModeThreads();
+	}
+
+	private void switchLocalOrNetworkingModeUi() {
 		System.out.println("switching");
 		Platform.runLater(() -> {
 			if (isLocalMode) {
@@ -250,6 +253,19 @@ public class MainFX extends Application implements UI {
 				switchLocalOrNetworkingMode();
 			});
 		});
+	}
+
+	private void switchLocalOrNetworkingModeThreads() {
+		Globals.tpda.interrupt();
+		Globals.tc.interrupt();
+		Globals.tpda = isLocalMode
+				? new LocalPlayer()
+				: new TransmitterPlayerConnectionKeeper(this);
+		Globals.tc = new TransmitterController(this, !isLocalMode);
+		Globals.tp.setNetworkingMode(!isLocalMode);
+		Globals.tc.start();
+		Globals.tpda.start();
+		Globals.tc.setVolume(Globals.volume);
 	}
 	
 	@Override
@@ -300,19 +316,21 @@ public class MainFX extends Application implements UI {
 
 		Loopback.initLoopbackList();
 
-		Globals.tpck = new TransmitterPlayerConnectionKeeper(this);
-		Globals.tpck.start();
-		
+		Globals.tpda = isLocalMode
+				? new LocalPlayer()
+				: new TransmitterPlayerConnectionKeeper(this);
 		Globals.tu = new TimeUpdater(this);
-		Globals.tu.start();
-		
 		Globals.tp = new TransmitterPlayer(mFileList, this);
-	    Globals.tp.start();
-	    
-	    Globals.tc = new TransmitterController(this);
-	    Globals.tc.start();
-	    
-	    mVolLabel.setText(Globals.volume.toString()+"%");
+	    Globals.tc = new TransmitterController(this, !isLocalMode);
+
+		Globals.tp.setNetworkingMode(!isLocalMode);
+
+		Globals.tpda.start();
+		Globals.tu.start();
+		Globals.tp.start();
+		Globals.tc.start();
+
+		mVolLabel.setText(Globals.volume.toString()+"%");
 		Globals.tc.setVolume(Globals.volume);
 		
 		refreshList();
@@ -763,7 +781,7 @@ public class MainFX extends Application implements UI {
 		Globals.tp.interrupt();
 		Globals.tc.setFinishFlag();
 		Globals.tu.interrupt();
-		Globals.tpck.interrupt();
+		Globals.tpda.interrupt();
 		TrackInfo.destroy();
 
 		System.out.println("close app");

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package jatx.musiccommons.frame;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -121,6 +122,10 @@ public class Frame {
 		//System.out.println("frame: " + (new Date()).getTime()%100000);
 		
 		return f;
+	}
+
+	public static Frame fromRawData(byte[] rawData) throws IOException, InterruptedException {
+		return fromInputStream(new ByteArrayInputStream(rawData));
 	}
 
 	public byte[] toByteArray() {

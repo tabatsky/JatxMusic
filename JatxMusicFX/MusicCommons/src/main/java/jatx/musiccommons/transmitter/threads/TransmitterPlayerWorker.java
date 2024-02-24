@@ -36,6 +36,7 @@ public class TransmitterPlayerWorker extends Thread {
     @Override
     public void run() {
         threadId = Thread.currentThread().getId();
+        System.out.println("(transmitter player worker " + threadId + ") starting");
         try {
             os = s.getOutputStream();
             final String msg = "(player " + threadId + ") socket connect";

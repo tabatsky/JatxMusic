@@ -27,17 +27,20 @@ public class TransmitterController extends Thread {
 
 	private volatile int volume = 0;
 
-	private volatile ConcurrentHashMap<String, TransmitterControllerWorker> workers =
+	private final ConcurrentHashMap<String, TransmitterControllerWorker> workers =
 			new ConcurrentHashMap<>();
 
 	volatile boolean finishFlag;
 	
 	volatile boolean mForceDisconnectFlag;
+
+	final boolean isNetworkingMode;
 	
-	public TransmitterController(UI ui) {
+	public TransmitterController(UI ui, boolean isNetworkingMode) {
 		finishFlag = false;
 		mForceDisconnectFlag = false;
-		
+
+		this.isNetworkingMode = isNetworkingMode;
 		uiRef = new WeakReference<>(ui);
 	}
 	
@@ -52,22 +55,41 @@ public class TransmitterController extends Thread {
 	public void setVolume(int volume) {
 		final String msg = "(controller) set volume: " + volume;
 		System.out.println(msg);
-		workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.setVolume(volume));
+		if (isNetworkingMode) {
+			workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.setVolume(volume));
+		} else {
+			if (Globals.tpda instanceof LocalPlayer) {
+				((LocalPlayer)Globals.tpda).setVolume(volume);
+			}
+		}
 		this.volume = volume;
 	}
 
 	public void play() {
 		System.out.println("(controller) play");
-		workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.play());
+		if (isNetworkingMode) {
+			workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.play());
+		} else {
+			if (Globals.tpda instanceof LocalPlayer) {
+				((LocalPlayer)Globals.tpda).play();
+			}
+		}
 	}
 
 	public void pause() {
 		System.out.println("(controller) pause");
-		workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.pause());
+		if (isNetworkingMode) {
+			workers.forEachValue(0L, transmitterControllerWorker -> transmitterControllerWorker.pause());
+		} else {
+			if (Globals.tpda instanceof LocalPlayer) {
+				((LocalPlayer)Globals.tpda).pause();
+			}
+		}
 	}
 	
 	@Override
 	public void run() {
+		System.out.println("(transmitter controller) starting");
 		ServerSocket ss = null;
 		
 		try {

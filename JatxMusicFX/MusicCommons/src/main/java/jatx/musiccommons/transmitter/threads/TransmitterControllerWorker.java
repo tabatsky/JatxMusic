@@ -95,7 +95,10 @@ public class TransmitterControllerWorker extends Thread {
             final String msg = "(controller " + threadId + ") socket disconnect";
             System.out.println(msg);
         } finally {
-            Globals.tpck.getWorkerByHost(host).setFinishWorkerFlag();
+            if (Globals.tpda instanceof TransmitterPlayerConnectionKeeper) {
+                ((TransmitterPlayerConnectionKeeper)Globals.tpda)
+                        .getWorkerByHost(host).setFinishWorkerFlag();
+            }
             try {
                 Thread.sleep(250);
                 os.close();

@@ -40,6 +40,8 @@ public class TransmitterPlayer extends Thread {
 	volatile long currentTime;
 	volatile float deltaTimeExtraSentToReceiver;
 
+	volatile boolean isNetworkingMode = false;
+
 	public TransmitterPlayer(List<File> fileList, UI ui) {
 		uiRef = new WeakReference<>(ui);
 		setFileList(fileList);
@@ -47,6 +49,10 @@ public class TransmitterPlayer extends Thread {
 		isPlaying = false;
 		
 		mPath = "";
+	}
+
+	public void setNetworkingMode(boolean isNetworkingMode) {
+		this.isNetworkingMode = isNetworkingMode;
 	}
 
 	public void setFileList(List<File> fileList) {
@@ -162,6 +168,7 @@ public class TransmitterPlayer extends Thread {
 	
 	@Override
 	public void run() {
+		System.out.println("(transmitter player) starting");
 		try {
 			translateMusic();
 		} catch (IOException e) {
@@ -212,7 +219,7 @@ public class TransmitterPlayer extends Thread {
 					}
 
 					if (data != null) {
-						Globals.tpck.writeData(data);
+						Globals.tpda.writeData(data);
 					}
 				} else {
 					Thread.sleep(10);

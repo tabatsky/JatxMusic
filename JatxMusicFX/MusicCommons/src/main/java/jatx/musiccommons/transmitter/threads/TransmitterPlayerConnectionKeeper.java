@@ -9,9 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
-public class TransmitterPlayerConnectionKeeper extends Thread {
+public class TransmitterPlayerConnectionKeeper extends TransmitterPlayerDataAcceptor {
     public static final int CONNECT_PORT_PLAYER = 7171;
 
     volatile WeakReference<UI> uiRef;
@@ -29,12 +28,14 @@ public class TransmitterPlayerConnectionKeeper extends Thread {
         return workers.get(host);
     }
 
+    @Override
     public void writeData(byte[] data) {
         workers.forEachValue(0L, transmitterPlayerWorker -> transmitterPlayerWorker.writeData(data));
     }
 
     @Override
     public void run() {
+        System.out.println("(transmitter player connection keeper) starting");
         try {
             while (true) {
                 Thread.sleep(100);

@@ -15,10 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import jatx.musiccommons.receiver.AutoConnectThread;
-import jatx.musiccommons.receiver.ReceiverController;
-import jatx.musiccommons.receiver.ReceiverPlayer;
-import jatx.musiccommons.receiver.UI;
+import jatx.musiccommons.receiver.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
