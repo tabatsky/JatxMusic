@@ -35,7 +35,7 @@
     <HBox id="button_pane_bottom">
 
 		<HBox styleClass="wifi_or_sound_group_bottom" id="wifi_or_sound_group">
-			<Button styleClass="sound_button_or_wifi_group_bottom" id="button_sound">
+			<Button styleClass="sound_button_bottom" id="button_sound">
 				<graphic>
 					<ImageView>
 						<Image url="/icons/ic_sound.png"/>
@@ -43,7 +43,7 @@
 				</graphic>
 			</Button>
 
-			<HBox styleClass="sound_button_or_wifi_group_bottom" id="wifi_group">
+			<HBox styleClass="wifi_group_bottom" id="wifi_group">
 				<Button styleClass="my_button_bottom" id="button_wifi">
 					<graphic>
 						<ImageView>
